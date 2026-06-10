@@ -1,0 +1,26 @@
+# Bypasses Cloudflare Turnstile and JS challenges using BQL's solve mutation.
+# Send to the /stealth/bql endpoint — standard /bql does not have access to the
+# stealth browser required for Cloudflare bypass.
+#
+# Endpoint: POST https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE
+#
+# You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
+# (switch to the stealth browser before running).
+#
+# solve.found  — whether a Cloudflare challenge was detected on the page
+# solve.solved — whether the challenge was successfully bypassed
+# solve.time   — milliseconds taken to solve the challenge
+
+mutation UnblockCloudflare {
+  goto(url: "https://example-cloudflare-protected.com", waitUntil: networkIdle) {
+    status
+  }
+  solve(type: cloudflare) {
+    found
+    solved
+    time
+  }
+  title {
+    title
+  }
+}

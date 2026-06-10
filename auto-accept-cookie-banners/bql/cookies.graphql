@@ -1,0 +1,28 @@
+# Navigates to a page and dismisses cookie consent banners using BQL's if mutation.
+#
+# goto with waitUntil: networkIdle ensures the page is fully settled before the if
+# check runs. if returns null (not an error) when the selector is absent, so this
+# mutation completes safely on pages with no banner.
+# visible: true prevents clicking off-screen banner elements that are in the DOM
+# but not yet rendered.
+#
+# Adjust the selector list to match the specific banner framework on the target site
+# (OneTrust, CookieBot, etc.).
+#
+# Endpoint: POST https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+#
+# You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
+
+mutation AcceptCookies {
+  goto(url: "https://example.com", waitUntil: networkIdle) {
+    status
+  }
+  if(selector: "[id*=accept], [class*=accept], button[id*=cookie]", visible: true) {
+    acceptBtn: click(selector: "[id*=accept], [class*=accept], button[id*=cookie]") {
+      time
+    }
+  }
+  screenshot {
+    base64
+  }
+}

@@ -17,10 +17,10 @@ This repo requires a pull request to merge into `main` — direct pushes are not
 
 ## Folder structure
 
-Each use case lives in a top-level folder named in `kebab-case` that matches the page title on [docs.browserless.io/examples](https://docs.browserless.io/examples).
+Each use case lives inside the `examples/` folder, named in `kebab-case` that matches the page title on [docs.browserless.io/examples](https://docs.browserless.io/examples).
 
 ```
-my-use-case/
+examples/my-use-case/
 ├── rest/               # REST API scripts (no persistent browser connection)
 │   ├── curl/
 │   ├── nodejs/
@@ -141,7 +141,7 @@ frameworks/playwright/csharp/   → PascalCase.cs
 After adding a use case, add a row to the table in `README.md`:
 
 ```markdown
-| [Title From Docs Page](./folder-name) | One-sentence description | language icons | framework icons |
+| [Title From Docs Page](./examples/folder-name) | One-sentence description | language icons | framework icons |
 ```
 
 **Language icons** — add one icon per programming language covered across all scripts in the folder. Use 20×20 devicons from the jsDelivr CDN:

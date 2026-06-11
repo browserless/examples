@@ -1,0 +1,29 @@
+# Endpoint: https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+# BQL IDE:  https://account.browserless.io/bql
+
+mutation FormExample {
+  goto(url: "https://www.browserless.io/practice-form") {
+    status
+  }
+
+  typeEmail: type(text: "user@example.com", selector: "#Email") {
+    time
+  }
+
+  typeMessage: type(selector: "#Message", text: "Hello from Browserless!") {
+    time
+  }
+
+  subject: select(selector: "select#Subject", value: "Support") {
+    selector
+  }
+
+  solve {
+    time
+    solved
+  }
+
+  submitForm: click(selector: "button[type='submit']") {
+    time
+  }
+}

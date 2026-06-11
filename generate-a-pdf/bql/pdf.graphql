@@ -1,0 +1,14 @@
+# Endpoint: https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+# BQL IDE:  https://account.browserless.io/bql
+#
+# The pdf mutation returns a base64-encoded PDF. Decode it client-side to write the file.
+
+mutation PDF {
+  goto(url: "https://example.com") {
+    status
+  }
+
+  pdf(format: a4, printBackground: true, displayHeaderFooter: true) {
+    base64
+  }
+}

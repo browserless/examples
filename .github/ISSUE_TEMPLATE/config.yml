@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Browserless Support
+    url: https://www.browserless.io/contact
+    about: For questions about the Browserless product, API behaviour, or your account — not for issues with these code examples.
+  - name: Browserless Docs
+    url: https://docs.browserless.io
+    about: API reference, guides, and BQL documentation.

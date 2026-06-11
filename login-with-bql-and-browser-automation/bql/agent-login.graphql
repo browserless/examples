@@ -1,0 +1,38 @@
+# Automates a login flow by chaining navigation, field detection, typing,
+# CAPTCHA solving, and form submission in a single BQL mutation.
+#
+# waitForSelector uses a multi-selector string so it resolves whichever email field
+# attribute the target site uses. solve handles any CAPTCHA that appears — it returns
+# found: false without error if no CAPTCHA is present.
+#
+# Endpoint: POST https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+#
+# You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
+
+mutation AgentLogin {
+  goto(url: "https://app.example.com/login") {
+    status
+  }
+  waitForSelector(selector: "input[type=email], input[name=email], #email") {
+    selector
+  }
+  typeEmail: type(
+    selector: "input[type=email], input[name=email], #email"
+    text: "user@example.com"
+  ) {
+    time
+  }
+  typePass: type(selector: "input[type=password]", text: "YOUR_PASSWORD") {
+    time
+  }
+  solve {
+    found
+    solved
+  }
+  submit: click(selector: "button[type=submit]") {
+    time
+  }
+  waitForNavigation {
+    status
+  }
+}

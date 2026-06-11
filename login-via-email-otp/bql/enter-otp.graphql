@@ -1,0 +1,21 @@
+# Step 2 of 2: enter the OTP code and submit the form.
+# Send this mutation to the browserQLEndpoint returned by trigger-otp.graphql,
+# with ?token=YOUR_API_TOKEN_HERE appended to the URL.
+#
+# Replace YOUR_OTP_HERE with the code retrieved from your inbox
+# (Mailosaur, Mailslurp, Gmail API, IMAP, etc.).
+
+mutation EnterOTP {
+  typeOTP: type(
+    selector: "input[name=otp], input[autocomplete=one-time-code]"
+    text: "YOUR_OTP_HERE"
+  ) {
+    time
+  }
+  submit: click(selector: "button[type=submit]") {
+    time
+  }
+  waitForNavigation {
+    status
+  }
+}

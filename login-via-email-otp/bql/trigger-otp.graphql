@@ -1,0 +1,32 @@
+# Step 1 of 2: navigate to the login page, submit the email, and wait for the OTP
+# field to appear. The reconnect mutation keeps the browser alive after this
+# mutation completes and returns a browserQLEndpoint for the follow-up request.
+#
+# reconnect(timeout: 60000) requires at least a Starter plan — the Free plan caps
+# reconnect timeouts at 10 seconds. Scale plans support up to 5 minutes.
+#
+# After this mutation returns, poll your inbox for the OTP code, then POST the
+# enter-otp.graphql mutation to the returned browserQLEndpoint
+# (append ?token=YOUR_API_TOKEN_HERE).
+#
+# Endpoint: POST https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+
+mutation TriggerOTP {
+  goto(url: "https://app.example.com/login") {
+    status
+  }
+  typeEmail: type(selector: "input[type=email]", text: "user@example.com") {
+    time
+  }
+  submit: click(selector: "button[type=submit]") {
+    time
+  }
+  waitForOTPField: waitForSelector(
+    selector: "input[name=otp], input[autocomplete=one-time-code]"
+  ) {
+    selector
+  }
+  reconnect(timeout: 60000) {
+    browserQLEndpoint
+  }
+}

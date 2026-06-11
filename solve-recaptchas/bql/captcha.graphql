@@ -1,0 +1,24 @@
+# Navigates to a reCAPTCHA page and solves it using the BQL solve mutation.
+# The solve mutation auto-detects any CAPTCHA type. Pass type: recaptcha to target
+# reCAPTCHA specifically, or omit it for auto-detection.
+#
+# Supported types: recaptcha (v2, v3, invisible), cloudflare, geetest, hcaptcha, and more.
+#
+# Endpoint: POST https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+#
+# You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
+
+mutation SolveCaptcha {
+  goto(url: "https://www.google.com/recaptcha/api2/demo") {
+    status
+  }
+  solve(type: recaptcha) {
+    found
+    solved
+    time
+    token
+  }
+  submit: click(selector: "#recaptcha-demo-submit") {
+    time
+  }
+}

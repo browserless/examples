@@ -14,27 +14,28 @@ WS_ENDPOINT = f'wss://production-sfo.browserless.io?token={TOKEN}&headless=false
 
 with sync_playwright() as playwright:
     browser = playwright.chromium.connect_over_cdp(WS_ENDPOINT)
+    try:
+        # Reuse the existing context and page — new ones won't be wired to the recording.
+        context = browser.contexts[0]
+        page = context.pages[0]
 
-    # Reuse the existing context and page — new ones won't be wired to the recording.
-    context = browser.contexts[0]
-    page = context.pages[0]
+        # Set viewport before starting — dimensions are fixed for the entire recording.
+        page.set_viewport_size({'width': 1280, 'height': 720})
 
-    # Set viewport before starting — dimensions are fixed for the entire recording.
-    page.set_viewport_size({'width': 1280, 'height': 720})
+        cdp_session = context.new_cdp_session(page)
+        cdp_session.send('Browserless.startRecording')
 
-    cdp_session = context.new_cdp_session(page)
-    cdp_session.send('Browserless.startRecording')
+        page.goto('https://example.com')
+        time.sleep(5)
 
-    page.goto('https://example.com')
-    time.sleep(5)
+        page.goto('https://example.com/about')
+        time.sleep(5)
 
-    page.goto('https://example.com/about')
-    time.sleep(5)
+        # base64 encoding is required — CDP can't transfer raw binary over its text protocol.
+        response = cdp_session.send('Browserless.stopRecording', {'encoding': 'base64'})
+        with open('recording.webm', 'wb') as f:
+            f.write(base64.b64decode(response['value']))
 
-    # base64 encoding is required — CDP can't transfer raw binary over its text protocol.
-    response = cdp_session.send('Browserless.stopRecording', {'encoding': 'base64'})
-    with open('recording.webm', 'wb') as f:
-        f.write(base64.b64decode(response['value']))
-
-    print('Recording saved to recording.webm')
-    browser.close()
+        print('Recording saved to recording.webm')
+    finally:
+        browser.close()

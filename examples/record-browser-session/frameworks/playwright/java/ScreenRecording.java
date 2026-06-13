@@ -26,33 +26,37 @@ public class ScreenRecording {
 
         try (Playwright playwright = Playwright.create()) {
             Browser browser = playwright.chromium().connectOverCDP(WS_ENDPOINT);
+            try {
+                // Reuse the existing context and page — new ones won't be wired to the recording.
+                BrowserContext context = browser.contexts().get(0);
+                Page page = context.pages().get(0);
 
-            // Reuse the existing context and page — new ones won't be wired to the recording.
-            BrowserContext context = browser.contexts().get(0);
-            Page page = context.pages().get(0);
+                // Set viewport before starting — dimensions are fixed for the entire recording.
+                page.setViewportSize(1280, 720);
 
-            // Set viewport before starting — dimensions are fixed for the entire recording.
-            page.setViewportSize(1280, 720);
+                CDPSession cdpSession = context.newCDPSession(page);
+                cdpSession.send("Browserless.startRecording", null);
 
-            CDPSession cdpSession = context.newCDPSession(page);
-            cdpSession.send("Browserless.startRecording", null);
+                page.navigate("https://example.com");
+                Thread.sleep(5000);
 
-            page.navigate("https://example.com");
-            Thread.sleep(5000);
+                page.navigate("https://example.com/about");
+                Thread.sleep(5000);
 
-            page.navigate("https://example.com/about");
-            Thread.sleep(5000);
+                // base64 encoding is required — CDP can't transfer raw binary over its text protocol.
+                var response = cdpSession.send(
+                    "Browserless.stopRecording",
+                    Map.of("encoding", "base64")
+                );
+                var valueElement = response.get("value");
+                if (valueElement == null) throw new IllegalStateException("stopRecording response missing 'value'");
+                byte[] data = Base64.getDecoder().decode(valueElement.getAsString());
+                Files.write(Paths.get("recording.webm"), data);
 
-            // base64 encoding is required — CDP can't transfer raw binary over its text protocol.
-            var response = cdpSession.send(
-                "Browserless.stopRecording",
-                Map.of("encoding", "base64")
-            );
-            byte[] data = Base64.getDecoder().decode(response.get("value").getAsString());
-            Files.write(Paths.get("recording.webm"), data);
-
-            System.out.println("Recording saved to recording.webm");
-            browser.close();
+                System.out.println("Recording saved to recording.webm");
+            } finally {
+                browser.close();
+            }
         }
     }
 }

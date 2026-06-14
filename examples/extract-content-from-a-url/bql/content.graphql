@@ -1,0 +1,14 @@
+# Endpoint: https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+# BQL IDE:  https://account.browserless.io/bql
+#
+# The html mutation returns the fully rendered DOM after JavaScript execution.
+
+mutation ExtractContent {
+  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+    status
+  }
+
+  html {
+    html
+  }
+}

@@ -1,0 +1,15 @@
+# Endpoint: https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+# BQL IDE:  https://account.browserless.io/bql
+#
+# BQL's built-in stealth and CAPTCHA solving make this the most reliable approach for Google.
+# mapSelector extracts innerText from every matched h3 on the results page.
+
+mutation GoogleSearch {
+  goto(url: "https://www.google.com/search?q=Browserless+headless+browser") {
+    status
+  }
+
+  results: mapSelector(selector: "h3", wait: true) {
+    innerText
+  }
+}

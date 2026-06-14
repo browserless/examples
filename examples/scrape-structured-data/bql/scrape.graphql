@@ -1,0 +1,19 @@
+# Endpoint: https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+# BQL IDE:  https://account.browserless.io/bql
+#
+# mapSelector extracts innerText from every element matching the given CSS selector.
+# Use aliases (heading, paragraphs) to give each result set a meaningful name.
+
+mutation Scrape {
+  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+    status
+  }
+
+  heading: mapSelector(selector: "h1") {
+    innerText
+  }
+
+  paragraphs: mapSelector(selector: "p") {
+    innerText
+  }
+}

@@ -2,11 +2,34 @@
 
 Runnable code examples for common [Browserless](https://docs.browserless.io/examples) use cases. 
 
-## Prerequisites
+## Getting Started
 
-- A Browserless API token — find it in your [account dashboard](https://account.browserless.io)
-- A regional endpoint, for example `production-sfo.browserless.io`
-- Replace `YOUR_API_TOKEN_HERE` in any script with your token before running
+1. **Get an API token** — sign up at [browserless.io](https://browserless.io) and grab your token from the [account dashboard](https://account.browserless.io).
+
+2. **Clone this repo**
+
+   ```bash
+   git clone https://github.com/browserless/examples.git
+   cd examples
+   ```
+
+3. **Pick an example** — browse the [Use cases](#use-cases) table below and open the folder for the task you want to run (e.g. `examples/take-a-screenshot`).
+
+4. **Set your token** — replace `YOUR_API_TOKEN_HERE` in the script with your actual API token.
+
+5. **Run it** — each example folder contains ready-to-run scripts. For example, to take a screenshot with cURL:
+
+   ```bash
+   bash examples/take-a-screenshot/rest/curl/screenshot.sh
+   ```
+
+   Or with Node.js:
+
+   ```bash
+   node examples/take-a-screenshot/frameworks/puppeteer/screenshot.mjs
+   ```
+
+Each example is self-contained — no shared dependencies to install.
 
 ## Use cases
 

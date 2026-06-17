@@ -13,8 +13,8 @@ TOKEN = 'YOUR_API_TOKEN_HERE'
 scrape_res = requests.post(
     f'https://production-sfo.browserless.io/scrape?token={TOKEN}',
     json={
-        'url': 'https://example.com',
-        'elements': [{'selector': 'img', 'timeout': 5000}],
+        'url': 'https://www.wikipedia.org',
+        'elements': [{'selector': 'img'}],
     },
 )
 

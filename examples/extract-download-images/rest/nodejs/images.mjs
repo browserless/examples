@@ -15,8 +15,8 @@ const scrapeRes = await fetch(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      url: 'https://example.com',
-      elements: [{ selector: 'img', timeout: 5000 }],
+      url: 'https://www.wikipedia.org',
+      elements: [{ selector: 'img' }],
     }),
   }
 );

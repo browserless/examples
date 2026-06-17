@@ -24,7 +24,7 @@ query = """mutation SolveCaptcha {
 }"""
 
 response = requests.post(
-    f'https://production-sfo.browserless.io/chromium/bql?token={TOKEN}',
+    f'https://production-sfo.browserless.io/stealth/bql?token={TOKEN}',
     json={'query': query, 'operationName': 'SolveCaptcha'},
 )
 

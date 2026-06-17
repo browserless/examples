@@ -7,7 +7,7 @@
 const TOKEN = 'YOUR_API_TOKEN_HERE';
 
 const response = await fetch(
-  `https://production-sfo.browserless.io/chromium/bql?token=${TOKEN}`,
+  `https://production-sfo.browserless.io/stealth/bql?token=${TOKEN}`,
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

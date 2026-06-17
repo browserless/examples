@@ -30,7 +30,7 @@ const response = await fetch(
           time
         }
       }`,
-      variables: '',
+      variables: {},
       operationName: 'FormExample',
     }),
   }

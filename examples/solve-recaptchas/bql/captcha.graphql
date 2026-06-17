@@ -4,7 +4,7 @@
 #
 # Supported types: recaptcha (v2, v3, invisible), cloudflare, geetest, hcaptcha, and more.
 #
-# Endpoint: POST https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE
+# Endpoint: POST https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE
 #
 # You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
 

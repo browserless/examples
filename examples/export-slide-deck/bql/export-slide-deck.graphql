@@ -1,0 +1,14 @@
+# Exports a Google Slides presentation as a PDF.
+# Replace YOUR_PRESENTATION_ID with your actual presentation ID.
+mutation ExportSlideDeck {
+  goto(
+    url: "https://docs.google.com/presentation/d/YOUR_PRESENTATION_ID/export/pdf"
+    waitUntil: networkIdle
+  ) {
+    status
+  }
+
+  pdf(options: { printBackground: true, format: "A4", landscape: true }) {
+    base64
+  }
+}

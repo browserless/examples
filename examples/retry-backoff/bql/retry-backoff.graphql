@@ -1,0 +1,11 @@
+# BQL does not have built-in retry logic — implement retries in the calling client.
+# This is the query to retry; wrap it in your language's retry/backoff loop.
+mutation RetryExample {
+  goto(url: "https://example.com", waitUntil: networkIdle) {
+    status
+  }
+
+  title {
+    title
+  }
+}

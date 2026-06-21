@@ -1,0 +1,35 @@
+# Searches Etsy for candles and extracts product titles, prices, and links.
+mutation ScrapeEtsy {
+  goto(url: "https://www.etsy.com", waitUntil: domContentLoaded) {
+    status
+  }
+
+  fillSearch: type(
+    selector: "input#global-enhancements-search-query"
+    text: "candles"
+  ) {
+    time
+  }
+
+  submitSearch: click(selector: "button.wt-input-btn-group__btn") {
+    time
+  }
+
+  waitForTimeout(time: 3000) {
+    time
+  }
+
+  listings: mapSelector(selector: ".v2-listing-card") {
+    title: mapSelector(selector: "h3", wait: true) {
+      innerText
+    }
+    price: mapSelector(selector: ".currency-value", wait: true) {
+      innerText
+    }
+    link: mapSelector(selector: "a.listing-link") {
+      href: attribute(name: "href") {
+        value
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# Scrapes Walmart product listings. Run against /stealth/bql with residential proxy.
+mutation ScrapeWalmart {
+  goto(url: "https://www.walmart.com/search?q=coffee+maker", waitUntil: networkIdle) {
+    status
+  }
+
+  waitForTimeout(time: 2000) {
+    time
+  }
+
+  products: mapSelector(selector: "[data-item-id]") {
+    title: mapSelector(selector: "[data-automation-id='product-title']") {
+      innerText
+    }
+    price: mapSelector(selector: "[itemprop='price']") {
+      innerText
+    }
+    rating: mapSelector(selector: "[data-testid='product-ratings']") {
+      innerText
+    }
+  }
+}

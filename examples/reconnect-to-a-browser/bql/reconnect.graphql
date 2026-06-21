@@ -1,0 +1,12 @@
+# Step 1: Start a session and request a reconnection endpoint.
+# The browser stays alive for 60 seconds after this request completes.
+mutation StartSession {
+  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+    status
+  }
+
+  reconnect(timeout: 60000) {
+    browserQLEndpoint
+    browserWSEndpoint
+  }
+}

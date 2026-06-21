@@ -1,0 +1,22 @@
+# Scrapes Zillow property listings. Run against /stealth/bql with residential proxy.
+mutation ScrapeZillow {
+  goto(url: "https://www.zillow.com/new-york-ny/", waitUntil: networkIdle) {
+    status
+  }
+
+  waitForTimeout(time: 3000) {
+    time
+  }
+
+  listings: mapSelector(selector: "[data-test='property-card']") {
+    address: mapSelector(selector: "[data-test='property-card-addr']") {
+      innerText
+    }
+    price: mapSelector(selector: "[data-test='property-card-price']") {
+      innerText
+    }
+    details: mapSelector(selector: ".StyledPropertyCardHomeDetails") {
+      innerText
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# Scrapes Reddit posts from r/programming. Run against /stealth/bql.
+mutation ScrapeReddit {
+  goto(url: "https://www.reddit.com/r/programming/", waitUntil: networkIdle) {
+    status
+  }
+
+  waitForTimeout(time: 2000) {
+    time
+  }
+
+  posts: mapSelector(selector: "article") {
+    title: mapSelector(selector: "[id*='post-title']") {
+      innerText
+    }
+    score: mapSelector(selector: "[id*='vote-arrows']") {
+      innerText
+    }
+    comments: mapSelector(selector: "a[data-click-id='comments']") {
+      innerText
+    }
+  }
+}

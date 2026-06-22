@@ -1,0 +1,14 @@
+# End-to-end test using BQL to verify page behavior.
+mutation E2ETest {
+  goto(url: "https://automationexercise.com", waitUntil: networkIdle) {
+    status
+  }
+
+  title {
+    title
+  }
+
+  verify: text(selector: "h2") {
+    text
+  }
+}

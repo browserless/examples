@@ -1,0 +1,10 @@
+# Navigates to an IP-check endpoint via a residential proxy.
+# Pass proxy parameters in the BQL endpoint URL query string.
+mutation CheckIP {
+  goto(url: "https://api.ipify.org?format=json", waitUntil: domContentLoaded) {
+    status
+  }
+  ip: innerText(selector: "body") {
+    innerText
+  }
+}

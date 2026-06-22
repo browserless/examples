@@ -1,0 +1,17 @@
+# Step 1: Create a session via the REST API first, then use the returned browserQL endpoint.
+# This mutation sets localStorage state — run it against the session's browserQL endpoint.
+mutation SetState {
+  goto(url: "https://automationexercise.com", waitUntil: networkIdle) {
+    status
+  }
+
+  evaluate(
+    expression: """
+      localStorage.setItem('shoppingCart', JSON.stringify({items: [{id: 1}], totalItems: 1}));
+      localStorage.setItem('userPreferences', JSON.stringify({theme: 'dark'}));
+      'state set'
+    """
+  ) {
+    value
+  }
+}

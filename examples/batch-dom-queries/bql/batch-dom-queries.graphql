@@ -1,0 +1,26 @@
+# Runs multiple DOM queries in a single BQL request.
+# All fields execute in the same browser session — no repeated page loads.
+mutation BatchDOMQueries {
+  goto(url: "https://example.com", waitUntil: networkIdle) {
+    status
+  }
+
+  title {
+    title
+  }
+
+  heading: text(selector: "h1") {
+    text
+  }
+
+  description: attribute(selector: "meta[name='description']", name: "content") {
+    value
+  }
+
+  links: mapSelector(selector: "a") {
+    text: innerText
+    href: attribute(name: "href") {
+      value
+    }
+  }
+}

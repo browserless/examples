@@ -47,4 +47,5 @@ for med in data['medications']:
     dosage = med['dosage'][0]['innerText'] if med['dosage'] else ''
     frequency = med['frequency'][0]['innerText'] if med['frequency'] else ''
     prescriber = med['prescriber'][0]['innerText'] if med['prescriber'] else ''
-    print(f'{name} | {dosage} | {frequency} | {prescriber}')
+    refills = med['refills'][0]['innerText'] if med['refills'] else ''
+    print(f'{name} | {dosage} | {frequency} | {prescriber} | {refills}')

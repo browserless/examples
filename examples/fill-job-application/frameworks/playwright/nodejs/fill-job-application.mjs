@@ -1,4 +1,4 @@
-// Fills and submits a job application form on a sandbox site using BQL.
+// Fills and submits a job application form on a sandbox site.
 //
 // Install: npm install playwright-core
 // Run:     node fill-job-application.mjs
@@ -12,20 +12,18 @@ const browser = await chromium.connectOverCDP(
 try {
   const context = browser.contexts()[0];
   const page = await context.newPage();
-  await page.goto('https://scraping-sandbox.netlify.app/helix', {
+  await page.goto('https://scraping-sandbox.netlify.app/helix/software-engineer-pipelines', {
     waitUntil: 'networkidle',
   });
 
-  await page.waitForSelector('form');
-  await page.fill('input[name="name"]', 'Jane Smith');
-  await page.fill('input[name="email"]', 'jane@example.com');
-  await page.fill('input[name="phone"]', '555-123-4567');
-  await page.selectOption('select[name="department"]', 'Engineering');
-  await page.fill('textarea[name="message"]', 'Excited to contribute to the team!');
-  await page.click('button[type="submit"]');
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: 'Application' }).click();
+  await page.waitForSelector('input[type="text"]');
+  await page.fill('input[type="text"]', 'Jane Smith');
+  await page.fill('input[type="email"]', 'jane@example.com');
+  await page.fill('textarea', 'Excited to contribute to the team!');
+  await page.getByRole('button', { name: 'Submit Application' }).click();
 
-  console.log('Application submitted, current URL:', page.url());
+  console.log('Application submitted successfully');
 } finally {
   await browser.close();
 }

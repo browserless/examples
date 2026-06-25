@@ -6,7 +6,7 @@ curl -X POST \
   "https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation FillJobApplication { goto(url: \"https://scraping-sandbox.netlify.app/helix\", waitUntil: networkIdle) { status } waitForSelector(selector: \"form\", timeout: 10000) { time } typeName: type(selector: \"input[name=name]\", text: \"Jane Smith\") { time } typeEmail: type(selector: \"input[name=email]\", text: \"jane@example.com\") { time } typePhone: type(selector: \"input[name=phone]\", text: \"555-123-4567\") { time } selectDept: select(selector: \"select[name=department]\", value: \"Engineering\") { selector } typeMessage: type(selector: \"textarea[name=message]\", text: \"Excited to contribute to the team!\") { time } submit: click(selector: \"button[type=submit]\") { time } }",
+    "query": "mutation FillJobApplication { goto(url: \"https://scraping-sandbox.netlify.app/helix/software-engineer-pipelines\", waitUntil: networkIdle) { status } clickApplicationTab: click(selector: \"button:nth-child(2)\") { time } waitForInputs: waitForSelector(selector: \"input[type=text]\", timeout: 10000) { time } typeName: type(selector: \"input[type=text]\", text: \"Jane Smith\") { time } typeEmail: type(selector: \"input[type=email]\", text: \"jane@example.com\") { time } typeMessage: type(selector: \"textarea\", text: \"Excited to contribute to the team!\") { time } submit: click(selector: \"div > button:only-of-type\") { time } }",
     "variables": {},
     "operationName": "FillJobApplication"
   }'

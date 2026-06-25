@@ -12,28 +12,25 @@ string endpoint = $"https://production-sfo.browserless.io/chromium/bql?token={to
 var payload = new
 {
     query = @"mutation FillJobApplication {
-  goto(url: ""https://scraping-sandbox.netlify.app/helix"", waitUntil: networkIdle) {
+  goto(url: ""https://scraping-sandbox.netlify.app/helix/software-engineer-pipelines"", waitUntil: networkIdle) {
     status
   }
-  waitForSelector(selector: ""form"", timeout: 10000) {
+  clickApplicationTab: click(selector: ""button:nth-child(2)"") {
     time
   }
-  typeName: type(selector: ""input[name=name]"", text: ""Jane Smith"") {
+  waitForInputs: waitForSelector(selector: ""input[type=text]"", timeout: 10000) {
     time
   }
-  typeEmail: type(selector: ""input[name=email]"", text: ""jane@example.com"") {
+  typeName: type(selector: ""input[type=text]"", text: ""Jane Smith"") {
     time
   }
-  typePhone: type(selector: ""input[name=phone]"", text: ""555-123-4567"") {
+  typeEmail: type(selector: ""input[type=email]"", text: ""jane@example.com"") {
     time
   }
-  selectDept: select(selector: ""select[name=department]"", value: ""Engineering"") {
-    selector
-  }
-  typeMessage: type(selector: ""textarea[name=message]"", text: ""Excited to contribute to the team!"") {
+  typeMessage: type(selector: ""textarea"", text: ""Excited to contribute to the team!"") {
     time
   }
-  submit: click(selector: ""button[type=submit]"") {
+  submit: click(selector: ""div > button:only-of-type"") {
     time
   }
 }",

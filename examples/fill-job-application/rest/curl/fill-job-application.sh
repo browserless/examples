@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Fills and submits a job application form on a sandbox site using BQL.
+# Run: bash fill-job-application.sh
+
+curl -X POST \
+  "https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "mutation FillJobApplication { goto(url: \"https://scraping-sandbox.netlify.app/helix\", waitUntil: networkIdle) { status } waitForSelector(selector: \"form\", timeout: 10000) { time } typeName: type(selector: \"input[name=name]\", text: \"Jane Smith\") { time } typeEmail: type(selector: \"input[name=email]\", text: \"jane@example.com\") { time } typePhone: type(selector: \"input[name=phone]\", text: \"555-123-4567\") { time } selectDept: select(selector: \"select[name=department]\", value: \"Engineering\") { selector } typeMessage: type(selector: \"textarea[name=message]\", text: \"Excited to contribute to the team!\") { time } submit: click(selector: \"button[type=submit]\") { time } }",
+    "variables": {},
+    "operationName": "FillJobApplication"
+  }'

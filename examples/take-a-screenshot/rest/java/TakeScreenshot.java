@@ -14,7 +14,7 @@ public class TakeScreenshot {
         String endpoint = "https://production-sfo.browserless.io/screenshot?token=" + TOKEN;
         String jsonData = """
             {
-                "url": "https://example.com",
+                "url": "https://scraping-sandbox.netlify.app/receipt",
                 "options": { "fullPage": true, "type": "png" }
             }""";
 

@@ -14,7 +14,7 @@ public class GeneratePdf {
         String endpoint = "https://production-sfo.browserless.io/pdf?token=" + TOKEN;
         String jsonData = """
             {
-                "url": "https://example.com",
+                "url": "https://scraping-sandbox.netlify.app/dashboard-report",
                 "options": {
                     "displayHeaderFooter": true,
                     "printBackground": true,

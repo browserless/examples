@@ -40,7 +40,7 @@ public class DownloadImages {
                     }
                 });
 
-                page.navigate("https://example.com");
+                page.navigate("https://scraping-sandbox.netlify.app/harvest-direct");
                 page.waitForLoadState(LoadState.NETWORKIDLE);
 
                 String html = page.content();

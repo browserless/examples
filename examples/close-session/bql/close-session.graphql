@@ -1,7 +1,7 @@
 # BQL sessions are automatically closed when the mutation completes.
 # For Session API sessions using BQL, terminate them with a DELETE request to the stop URL.
 mutation CloseExample {
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: networkIdle) {
     status
   }
   text(selector: "h1") {

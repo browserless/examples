@@ -19,7 +19,7 @@ with sync_playwright() as playwright:
         # Use the default context — new_context() doesn't inherit launch settings.
         context = browser.contexts[0]
         page = context.new_page()
-        page.goto('https://example.com')
+        page.goto('https://scraping-sandbox.netlify.app/products')
         print('Title:', page.title())
     finally:
         # Always close to release the session even on error.

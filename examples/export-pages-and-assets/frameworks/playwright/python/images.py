@@ -26,7 +26,7 @@ with sync_playwright() as playwright:
         context = browser.contexts[0]
         page = context.new_page()
         page.on('response', handle_response)
-        page.goto('https://example.com')
+        page.goto('https://scraping-sandbox.netlify.app/harvest-direct')
         page.wait_for_load_state('networkidle')
 
         html = page.content()

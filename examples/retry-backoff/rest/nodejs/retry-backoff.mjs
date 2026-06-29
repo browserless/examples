@@ -28,7 +28,7 @@ const response = await fetchWithRetry(BQL_URL, {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     query: `mutation {
-      goto(url: "https://example.com", waitUntil: networkIdle) { status }
+      goto(url: "https://scraping-sandbox.netlify.app/dashboard", waitUntil: networkIdle) { status }
       title { title }
     }`,
     variables: {},

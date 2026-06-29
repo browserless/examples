@@ -12,7 +12,7 @@ string endpoint = $"https://production-sfo.browserless.io/screenshot?token={Toke
 
 var payload = new
 {
-    url = "https://example.com",
+    url = "https://scraping-sandbox.netlify.app/receipt",
     options = new { fullPage = true, type = "png" },
 };
 

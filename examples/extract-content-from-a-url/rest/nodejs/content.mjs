@@ -11,7 +11,7 @@ const response = await fetch(
       'Cache-Control': 'no-cache',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ url: 'https://example.com' }),
+    body: JSON.stringify({ url: 'https://scraping-sandbox.netlify.app/javascript-enabled' }),
   }
 );
 const html = await response.text();

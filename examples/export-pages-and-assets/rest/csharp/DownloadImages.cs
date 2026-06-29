@@ -18,7 +18,7 @@ class DownloadImages
         using var client = new HttpClient();
 
         var body = new StringContent(
-            "{\"url\":\"https://example.com\",\"includeResources\":true}",
+            "{\"url\":\"https://scraping-sandbox.netlify.app/harvest-direct\",\"includeResources\":true}",
             Encoding.UTF8,
             "application/json"
         );

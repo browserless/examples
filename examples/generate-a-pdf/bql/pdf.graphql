@@ -4,7 +4,7 @@
 # The pdf mutation returns a base64-encoded PDF. Decode it client-side to write the file.
 
 mutation PDF {
-  goto(url: "https://example.com") {
+  goto(url: "https://scraping-sandbox.netlify.app/dashboard-report") {
     status
   }
 

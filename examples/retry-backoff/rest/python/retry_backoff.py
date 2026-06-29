@@ -14,7 +14,7 @@ BASE_DELAY = 1  # seconds
 
 query = """
 mutation {
-  goto(url: "https://example.com", waitUntil: networkIdle) { status }
+  goto(url: "https://scraping-sandbox.netlify.app/dashboard", waitUntil: networkIdle) { status }
   title { title }
 }
 """

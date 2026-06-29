@@ -16,7 +16,7 @@ http.use_ssl = true
 
 request = Net::HTTP::Post.new(uri)
 request['Content-Type'] = 'application/json'
-request.body = JSON.generate({ url: 'https://example.com', includeResources: true })
+request.body = JSON.generate({ url: 'https://scraping-sandbox.netlify.app/harvest-direct', includeResources: true })
 
 response = http.request(request)
 

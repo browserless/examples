@@ -10,7 +10,7 @@ DELAY=1
 for i in $(seq 1 $MAX_RETRIES); do
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$URL" \
     -H "Content-Type: application/json" \
-    -d '{"query": "mutation { goto(url: \"https://example.com\", waitUntil: networkIdle) { status } title { title } }", "variables": {}}')
+    -d '{"query": "mutation { goto(url: \"https://scraping-sandbox.netlify.app/dashboard\", waitUntil: networkIdle) { status } title { title } }", "variables": {}}')
 
   HTTP_CODE=$(echo "$RESPONSE" | tail -1)
   BODY=$(echo "$RESPONSE" | head -1)

@@ -11,7 +11,7 @@ const browser = await puppeteer.connect({
 });
 try {
   const page = await browser.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle2' });
+  await page.goto('https://scraping-sandbox.netlify.app/receipt', { waitUntil: 'networkidle2' });
   await page.screenshot({ path: 'screenshot.png', fullPage: true });
   console.log('Screenshot saved as screenshot.png.');
 } finally {

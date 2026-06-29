@@ -16,7 +16,7 @@ const browser = await puppeteer.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle2' });
+  await page.goto('https://scraping-sandbox.netlify.app/clarity-health', { waitUntil: 'networkidle2' });
 
   // Try common accept-button selectors — banners rarely share a single standard attribute.
   const cookieSelectors = [

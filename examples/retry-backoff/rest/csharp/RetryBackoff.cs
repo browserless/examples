@@ -15,7 +15,7 @@ int delayMs = 1000;
 var payload = JsonSerializer.Serialize(new
 {
     query = @"mutation {
-      goto(url: ""https://example.com"", waitUntil: networkIdle) { status }
+      goto(url: ""https://scraping-sandbox.netlify.app/dashboard"", waitUntil: networkIdle) { status }
       title { title }
     }",
     variables = new { },

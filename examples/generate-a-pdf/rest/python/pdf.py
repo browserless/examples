@@ -9,7 +9,7 @@ response = requests.post(
     'https://production-sfo.browserless.io/pdf?token=YOUR_API_TOKEN_HERE',
     headers={'Cache-Control': 'no-cache', 'Content-Type': 'application/json'},
     json={
-        'url': 'https://example.com',
+        'url': 'https://scraping-sandbox.netlify.app/dashboard-report',
         'options': {
             'displayHeaderFooter': True,
             'printBackground': True,

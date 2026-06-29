@@ -9,7 +9,7 @@ const response = await fetch(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      url: 'https://example.com',
+      url: 'https://scraping-sandbox.netlify.app/products',
       elements: [
         { selector: 'h1' },
         { selector: 'p' },

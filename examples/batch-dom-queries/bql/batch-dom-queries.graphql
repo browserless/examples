@@ -1,7 +1,7 @@
 # Runs multiple DOM queries in a single BQL request.
 # All fields execute in the same browser session — no repeated page loads.
 mutation BatchDOMQueries {
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: networkIdle) {
     status
   }
 

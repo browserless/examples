@@ -33,10 +33,10 @@ class ScreenRecording
             var cdpSession = await context.NewCDPSessionAsync(page);
             await cdpSession.SendAsync("Browserless.startRecording");
 
-            await page.GotoAsync("https://example.com");
+            await page.GotoAsync("https://scraping-sandbox.netlify.app/login");
             await Task.Delay(5000);
 
-            await page.GotoAsync("https://example.com/about");
+            await page.GotoAsync("https://scraping-sandbox.netlify.app/contact-us");
             await Task.Delay(5000);
 
             // base64 encoding is required — CDP can't transfer raw binary over its text protocol.

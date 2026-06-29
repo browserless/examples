@@ -13,7 +13,7 @@ public class ScrapeStructuredData {
         String endpoint = "https://production-sfo.browserless.io/scrape?token=" + TOKEN;
         String jsonData = """
             {
-                "url": "https://example.com",
+                "url": "https://scraping-sandbox.netlify.app/products",
                 "elements": [
                     { "selector": "h1" },
                     { "selector": "p" }

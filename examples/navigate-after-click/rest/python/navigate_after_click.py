@@ -7,7 +7,7 @@ import requests
 
 query = """
 mutation NavigateAfterClick {
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: networkIdle) {
     status
   }
   click(selector: "a", waitForNavigation: true) {

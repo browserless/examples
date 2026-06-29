@@ -23,10 +23,10 @@ try {
   const cdp = await context.newCDPSession(page);
   await cdp.send('Browserless.startRecording');
 
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/login', { waitUntil: 'networkidle' });
   await new Promise(r => setTimeout(r, 2000));
 
-  await page.goto('https://example.com/about', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/contact-us', { waitUntil: 'networkidle' });
   await new Promise(r => setTimeout(r, 2000));
 
   // base64 encoding is required — CDP can't transfer raw binary over its text protocol.

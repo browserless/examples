@@ -8,7 +8,7 @@ import requests
 response = requests.post(
     'https://production-sfo.browserless.io/content?token=YOUR_API_TOKEN_HERE',
     headers={'Cache-Control': 'no-cache', 'Content-Type': 'application/json'},
-    json={'url': 'https://example.com'},
+    json={'url': 'https://scraping-sandbox.netlify.app/javascript-enabled'},
 )
 html = response.text
 print(html[:500])

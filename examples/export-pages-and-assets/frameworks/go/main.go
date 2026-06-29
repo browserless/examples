@@ -32,7 +32,7 @@ func main() {
 	var resourceURLs []string
 
 	if err := chromedp.Run(ctx,
-		chromedp.Navigate("https://example.com"),
+		chromedp.Navigate("https://scraping-sandbox.netlify.app/harvest-direct"),
 		chromedp.WaitReady("body"),
 		chromedp.OuterHTML("html", &html),
 		chromedp.Evaluate(`[

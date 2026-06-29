@@ -28,7 +28,7 @@ const result = await withRetry(async () => {
   });
   try {
     const page = await browser.newPage();
-    await page.goto('https://example.com');
+    await page.goto('https://scraping-sandbox.netlify.app/dashboard');
     return await page.title();
   } finally {
     // Always close to release the session even on error.

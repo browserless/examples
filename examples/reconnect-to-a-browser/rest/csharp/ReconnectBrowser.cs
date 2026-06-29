@@ -13,7 +13,7 @@ string bqlUrl = $"https://production-sfo.browserless.io/stealth/bql?token={token
 var startPayload = new
 {
     query = @"mutation StartSession {
-      goto(url: ""https://example.com"", waitUntil: domContentLoaded) { status }
+      goto(url: ""https://scraping-sandbox.netlify.app/aether"", waitUntil: domContentLoaded) { status }
       reconnect(timeout: 60000) { browserQLEndpoint }
     }",
     variables = new { },

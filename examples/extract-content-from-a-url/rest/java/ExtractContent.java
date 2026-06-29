@@ -11,7 +11,7 @@ public class ExtractContent {
 
     public static void main(String[] args) throws Exception {
         String endpoint = "https://production-sfo.browserless.io/content?token=" + TOKEN;
-        String jsonData = "{\"url\": \"https://example.com\"}";
+        String jsonData = "{\"url\": \"https://scraping-sandbox.netlify.app/javascript-enabled\"}";
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()

@@ -8,7 +8,7 @@ import requests
 response = requests.post(
     'https://production-sfo.browserless.io/scrape?token=YOUR_API_TOKEN_HERE',
     json={
-        'url': 'https://example.com',
+        'url': 'https://scraping-sandbox.netlify.app/products',
         'elements': [
             {'selector': 'h1'},
             {'selector': 'p'},

@@ -13,7 +13,7 @@ public class ReconnectBrowser {
 
         String startPayload = """
             {
-              "query": "mutation StartSession { goto(url: \\"https://example.com\\", waitUntil: domContentLoaded) { status } reconnect(timeout: 60000) { browserQLEndpoint } }",
+              "query": "mutation StartSession { goto(url: \\"https://scraping-sandbox.netlify.app/aether\\", waitUntil: domContentLoaded) { status } reconnect(timeout: 60000) { browserQLEndpoint } }",
               "variables": {},
               "operationName": "StartSession"
             }

@@ -14,7 +14,7 @@ const response = await fetch(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      url: 'https://example.com',
+      url: 'https://scraping-sandbox.netlify.app/receipt',
       options: { fullPage: true, type: 'png' },
     }),
   }

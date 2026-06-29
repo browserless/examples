@@ -13,7 +13,7 @@ const browser = await chromium.connectOverCDP(
 try {
   const context = browser.contexts()[0] ?? await browser.newContext();
   const page = await context.newPage();
-  await page.goto("https://example.com", { waitUntil: "networkidle" });
+  await page.goto("https://scraping-sandbox.netlify.app/products", { waitUntil: "networkidle" });
 
   const title = await page.title();
   console.log("Page title:", title);

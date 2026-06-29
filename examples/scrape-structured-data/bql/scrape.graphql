@@ -5,7 +5,7 @@
 # Use aliases (heading, paragraphs) to give each result set a meaningful name.
 
 mutation Scrape {
-  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: domContentLoaded) {
     status
   }
 

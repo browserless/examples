@@ -12,7 +12,7 @@ string endpoint = $"https://production-sfo.browserless.io/bql?token={token}";
 var payload = new
 {
     query = @"mutation NavigateAfterClick {
-      goto(url: ""https://example.com"", waitUntil: networkIdle) { status }
+      goto(url: ""https://scraping-sandbox.netlify.app/products"", waitUntil: networkIdle) { status }
       click(selector: ""a"", waitForNavigation: true) { time }
       title { title }
       currentURL { url }

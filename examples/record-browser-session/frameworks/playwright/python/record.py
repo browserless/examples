@@ -25,10 +25,10 @@ with sync_playwright() as playwright:
         cdp_session = context.new_cdp_session(page)
         cdp_session.send('Browserless.startRecording')
 
-        page.goto('https://example.com')
+        page.goto('https://scraping-sandbox.netlify.app/login')
         time.sleep(5)
 
-        page.goto('https://example.com/about')
+        page.goto('https://scraping-sandbox.netlify.app/contact-us')
         time.sleep(5)
 
         # base64 encoding is required — CDP can't transfer raw binary over its text protocol.

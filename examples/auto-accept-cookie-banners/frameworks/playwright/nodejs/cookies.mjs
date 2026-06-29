@@ -19,7 +19,7 @@ try {
   // doesn't inherit proxy, profile, or launch settings.
   const context = browser.contexts()[0];
   const page = await context.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/clarity-health', { waitUntil: 'networkidle' });
 
   // Try common accept-button selectors — banners rarely share a single standard attribute.
   const cookieSelectors = [

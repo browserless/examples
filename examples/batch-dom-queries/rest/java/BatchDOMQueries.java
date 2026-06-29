@@ -11,7 +11,7 @@ public class BatchDOMQueries {
         String endpoint = "https://production-sfo.browserless.io/bql?token=" + token;
 
         String query = "mutation BatchDOMQueries {"
-            + " goto(url: \\\"https://example.com\\\", waitUntil: networkIdle) { status }"
+            + " goto(url: \\\"https://scraping-sandbox.netlify.app/products\\\", waitUntil: networkIdle) { status }"
             + " title { title }"
             + " heading: text(selector: \\\"h1\\\") { text }"
             + " description: attribute(selector: \\\"meta[name='description']\\\", name: \\\"content\\\") { value }"

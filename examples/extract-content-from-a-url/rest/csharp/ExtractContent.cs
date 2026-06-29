@@ -10,7 +10,7 @@ using System.Text.Json;
 const string Token = "YOUR_API_TOKEN_HERE";
 string endpoint = $"https://production-sfo.browserless.io/content?token={Token}";
 
-var payload = new { url = "https://example.com" };
+var payload = new { url = "https://scraping-sandbox.netlify.app/javascript-enabled" };
 
 using var client = new HttpClient();
 var request = new HttpRequestMessage(HttpMethod.Post, endpoint);

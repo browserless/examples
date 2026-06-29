@@ -29,7 +29,7 @@ try {
     }
   });
 
-  await page.goto('https://example.com', { waitUntil: 'networkidle2' });
+  await page.goto('https://scraping-sandbox.netlify.app/harvest-direct', { waitUntil: 'networkidle2' });
 
   const html = await page.content();
   const assets = (await Promise.all(assetPromises)).filter(Boolean);

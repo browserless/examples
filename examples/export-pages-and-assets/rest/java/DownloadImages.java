@@ -16,7 +16,7 @@ public class DownloadImages {
         HttpRequest req = HttpRequest.newBuilder()
             .uri(URI.create("https://production-sfo.browserless.io/export?token=" + token))
             .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString("{\"url\":\"https://example.com\",\"includeResources\":true}"))
+            .POST(HttpRequest.BodyPublishers.ofString("{\"url\":\"https://scraping-sandbox.netlify.app/harvest-direct\",\"includeResources\":true}"))
             .build();
 
         HttpResponse<byte[]> res = HttpClient.newHttpClient()

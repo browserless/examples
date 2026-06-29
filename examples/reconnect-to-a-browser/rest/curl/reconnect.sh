@@ -7,7 +7,7 @@ RESPONSE=$(curl -s -X POST \
   "https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation StartSession { goto(url: \"https://example.com\", waitUntil: domContentLoaded) { status } reconnect(timeout: 60000) { browserQLEndpoint browserWSEndpoint } }",
+    "query": "mutation StartSession { goto(url: \"https://scraping-sandbox.netlify.app/aether\", waitUntil: domContentLoaded) { status } reconnect(timeout: 60000) { browserQLEndpoint browserWSEndpoint } }",
     "variables": {},
     "operationName": "StartSession"
   }')

@@ -7,7 +7,7 @@ const TOKEN = 'YOUR_API_TOKEN_HERE';
 const BQL_URL = `https://production-sfo.browserless.io/stealth/bql?token=${TOKEN}`;
 
 const startQuery = `mutation StartSession {
-  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+  goto(url: "https://scraping-sandbox.netlify.app/aether", waitUntil: domContentLoaded) {
     status
   }
   reconnect(timeout: 60000) {

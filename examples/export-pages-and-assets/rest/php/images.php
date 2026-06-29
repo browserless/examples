@@ -12,7 +12,7 @@ curl_setopt_array($ch, [
     CURLOPT_POST           => true,
     CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
     CURLOPT_POSTFIELDS     => json_encode([
-        'url'              => 'https://example.com',
+        'url'              => 'https://scraping-sandbox.netlify.app/harvest-direct',
         'includeResources' => true,
     ]),
     CURLOPT_RETURNTRANSFER => true,

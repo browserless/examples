@@ -12,7 +12,7 @@ string endpoint = $"https://production-sfo.browserless.io/scrape?token={Token}";
 
 var payload = new
 {
-    url = "https://example.com",
+    url = "https://scraping-sandbox.netlify.app/products",
     elements = new[] { new { selector = "h1" }, new { selector = "p" } },
 };
 

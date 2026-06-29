@@ -1,7 +1,7 @@
 # Step 1: Start a session and request a reconnection endpoint.
 # The browser stays alive for 60 seconds after this request completes.
 mutation StartSession {
-  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+  goto(url: "https://scraping-sandbox.netlify.app/aether", waitUntil: domContentLoaded) {
     status
   }
 

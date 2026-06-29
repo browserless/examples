@@ -8,7 +8,7 @@ curl -X POST \
   "https://production-sfo.browserless.io/scrape?token=YOUR_API_TOKEN_HERE" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "url": "https://scraping-sandbox.netlify.app/products",
     "elements": [
       { "selector": "h1" },
       { "selector": "p" }

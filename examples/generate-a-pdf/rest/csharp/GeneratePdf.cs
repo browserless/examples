@@ -12,7 +12,7 @@ string endpoint = $"https://production-sfo.browserless.io/pdf?token={Token}";
 
 var payload = new
 {
-    url = "https://example.com",
+    url = "https://scraping-sandbox.netlify.app/dashboard-report",
     options = new { displayHeaderFooter = true, printBackground = true, format = "A4" },
 };
 

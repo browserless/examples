@@ -12,7 +12,7 @@ const browser = await puppeteer.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto("https://example.com", { waitUntil: "networkidle2" });
+  await page.goto("https://scraping-sandbox.netlify.app/products", { waitUntil: "networkidle2" });
 
   const title = await page.title();
   console.log("Page title:", title);

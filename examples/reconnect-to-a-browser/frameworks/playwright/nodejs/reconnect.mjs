@@ -16,7 +16,7 @@ try {
   const page = await browser.newPage();
   const cdp = await page.context().newCDPSession(page);
 
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/aether', { waitUntil: 'networkidle' });
 
   // Keep the browser alive for 60 seconds after disconnecting.
   const { browserWSEndpoint } = await cdp.send('Browserless.reconnect', {

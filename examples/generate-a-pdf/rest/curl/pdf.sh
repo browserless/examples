@@ -9,7 +9,7 @@ curl -X POST \
   -H 'Cache-Control: no-cache' \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example.com",
+    "url": "https://scraping-sandbox.netlify.app/dashboard-report",
     "options": {
       "displayHeaderFooter": true,
       "printBackground": true,

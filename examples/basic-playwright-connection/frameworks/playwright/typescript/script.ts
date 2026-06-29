@@ -15,7 +15,7 @@ try {
   // doesn't inherit proxy, profile, or launch settings.
   const context = browser.contexts()[0];
   const page = await context.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'networkidle' });
   console.log('Title:', await page.title());
 } finally {
   // Always close to release the session even on error.

@@ -1,7 +1,7 @@
 # Clicks a link and waits for navigation to complete.
 # The waitForNavigation flag on click ensures the mutation waits for the new page to load.
 mutation NavigateAfterClick {
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: networkIdle) {
     status
   }
 

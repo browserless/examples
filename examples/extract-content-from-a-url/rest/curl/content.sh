@@ -8,4 +8,4 @@ curl -X POST \
   "https://production-sfo.browserless.io/content?token=YOUR_API_TOKEN_HERE" \
   -H 'Cache-Control: no-cache' \
   -H "Content-Type: application/json" \
-  -d '{ "url": "https://example.com" }'
+  -d '{ "url": "https://scraping-sandbox.netlify.app/javascript-enabled" }'

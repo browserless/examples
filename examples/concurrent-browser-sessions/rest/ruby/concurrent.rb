@@ -10,11 +10,11 @@ require 'uri'
 
 TOKEN = 'YOUR_API_TOKEN_HERE'
 URLS = [
-  'https://example.com/page/1',
-  'https://example.com/page/2',
-  'https://example.com/page/3',
-  'https://example.com/page/4',
-  'https://example.com/page/5',
+  'https://scraping-sandbox.netlify.app/products',
+  'https://scraping-sandbox.netlify.app/contact-us',
+  'https://scraping-sandbox.netlify.app/receipt',
+  'https://scraping-sandbox.netlify.app/dashboard',
+  'https://scraping-sandbox.netlify.app/helix',
 ].freeze
 
 threads = URLS.each_with_index.map do |url, i|

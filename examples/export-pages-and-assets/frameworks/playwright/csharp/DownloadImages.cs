@@ -40,7 +40,7 @@ class DownloadImages
                 }
             };
 
-            await page.GotoAsync("https://example.com",
+            await page.GotoAsync("https://scraping-sandbox.netlify.app/harvest-direct",
                 new() { WaitUntil = WaitUntilState.NetworkIdle });
 
             var html = await page.ContentAsync();

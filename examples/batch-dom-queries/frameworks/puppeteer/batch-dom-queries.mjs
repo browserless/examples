@@ -13,7 +13,7 @@ const browser = await puppeteer.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle2' });
+  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'networkidle2' });
 
   // Run all queries in a single evaluate call to minimise round-trips.
   const results = await page.evaluate(() => ({

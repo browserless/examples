@@ -37,10 +37,10 @@ public class ScreenRecording {
                 CDPSession cdpSession = context.newCDPSession(page);
                 cdpSession.send("Browserless.startRecording", null);
 
-                page.navigate("https://example.com");
+                page.navigate("https://scraping-sandbox.netlify.app/login");
                 Thread.sleep(5000);
 
-                page.navigate("https://example.com/about");
+                page.navigate("https://scraping-sandbox.netlify.app/contact-us");
                 Thread.sleep(5000);
 
                 // base64 encoding is required — CDP can't transfer raw binary over its text protocol.

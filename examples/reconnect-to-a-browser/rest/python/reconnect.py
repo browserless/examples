@@ -11,7 +11,7 @@ BQL_URL = f'https://production-sfo.browserless.io/stealth/bql?token={TOKEN}'
 
 start_query = """
 mutation StartSession {
-  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+  goto(url: "https://scraping-sandbox.netlify.app/aether", waitUntil: domContentLoaded) {
     status
   }
   reconnect(timeout: 60000) {

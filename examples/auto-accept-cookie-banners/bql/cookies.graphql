@@ -14,7 +14,7 @@
 # You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
 
 mutation AcceptCookies {
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/clarity-health", waitUntil: networkIdle) {
     status
   }
   if(selector: "[id*=accept], [class*=accept], button[id*=cookie]", visible: true) {

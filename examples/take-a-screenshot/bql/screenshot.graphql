@@ -4,7 +4,7 @@
 # The screenshot mutation returns a base64-encoded PNG. Decode it client-side to write the file.
 
 mutation Screenshot {
-  goto(url: "https://example.com") {
+  goto(url: "https://scraping-sandbox.netlify.app/receipt") {
     status
   }
 

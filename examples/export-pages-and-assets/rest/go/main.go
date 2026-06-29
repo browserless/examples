@@ -17,7 +17,7 @@ import (
 func main() {
 	token := "YOUR_API_TOKEN_HERE"
 
-	body := `{"url":"https://example.com","includeResources":true}`
+	body := `{"url":"https://scraping-sandbox.netlify.app/harvest-direct","includeResources":true}`
 	req, _ := http.NewRequest("POST",
 		"https://production-sfo.browserless.io/export?token="+token,
 		bytes.NewBufferString(body),

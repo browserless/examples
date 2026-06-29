@@ -13,7 +13,7 @@ public class RetryBackoff {
     public static void main(String[] args) throws Exception {
         String token = "YOUR_API_TOKEN_HERE";
         String endpoint = "https://production-sfo.browserless.io/bql?token=" + token;
-        String payload = "{\"query\": \"mutation { goto(url: \\\"https://example.com\\\", waitUntil: networkIdle) { status } title { title } }\", \"variables\": {}}";
+        String payload = "{\"query\": \"mutation { goto(url: \\\"https://scraping-sandbox.netlify.app/dashboard\\\", waitUntil: networkIdle) { status } title { title } }\", \"variables\": {}}";
 
         HttpClient client = HttpClient.newHttpClient();
         long delay = BASE_DELAY_MS;

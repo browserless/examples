@@ -11,7 +11,7 @@ const browser = await chromium.connect(
 );
 try {
   const page = await browser.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'networkidle' });
   const data = await page.evaluate(() => ({
     heading: document.querySelector('h1')?.textContent,
     paragraphs: [...document.querySelectorAll('p')].map((el) => el.textContent),

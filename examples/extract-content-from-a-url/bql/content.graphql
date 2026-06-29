@@ -4,7 +4,7 @@
 # The html mutation returns the fully rendered DOM after JavaScript execution.
 
 mutation ExtractContent {
-  goto(url: "https://example.com", waitUntil: domContentLoaded) {
+  goto(url: "https://scraping-sandbox.netlify.app/javascript-enabled", waitUntil: domContentLoaded) {
     status
   }
 

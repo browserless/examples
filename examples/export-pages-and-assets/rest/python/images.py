@@ -10,7 +10,7 @@ TOKEN = 'YOUR_API_TOKEN_HERE'
 
 response = requests.post(
     f'https://production-sfo.browserless.io/export?token={TOKEN}',
-    json={'url': 'https://example.com', 'includeResources': True},
+    json={'url': 'https://scraping-sandbox.netlify.app/harvest-direct', 'includeResources': True},
 )
 
 with open('page.zip', 'wb') as f:

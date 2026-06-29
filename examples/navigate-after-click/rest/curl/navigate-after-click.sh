@@ -6,7 +6,7 @@ curl -X POST \
   "https://production-sfo.browserless.io/bql?token=YOUR_API_TOKEN_HERE" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation NavigateAfterClick { goto(url: \"https://example.com\", waitUntil: networkIdle) { status } click(selector: \"a\", waitForNavigation: true) { time } title { title } currentURL { url } }",
+    "query": "mutation NavigateAfterClick { goto(url: \"https://scraping-sandbox.netlify.app/products\", waitUntil: networkIdle) { status } click(selector: \"a\", waitForNavigation: true) { time } title { title } currentURL { url } }",
     "variables": {},
     "operationName": "NavigateAfterClick"
   }'

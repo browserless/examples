@@ -16,7 +16,7 @@ try {
   const context = browser.contexts()[0] ?? await browser.newContext();
   const page = await context.newPage();
 
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'networkidle' });
 
   // Playwright waits for navigation automatically after click.
   await page.click('a');

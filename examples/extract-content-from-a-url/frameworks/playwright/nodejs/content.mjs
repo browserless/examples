@@ -11,7 +11,7 @@ const browser = await chromium.connect(
 );
 try {
   const page = await browser.newPage();
-  await page.goto('https://example.com', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/javascript-enabled', { waitUntil: 'networkidle' });
   const html = await page.content();
   console.log(html.slice(0, 500));
 } finally {

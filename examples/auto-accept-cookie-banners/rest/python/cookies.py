@@ -14,7 +14,7 @@ query = """mutation AcceptCookies {
   # waitUntil: networkIdle ensures the page is fully settled before the if check runs.
   # if returns null (not an error) when the selector is absent, so this is safe on
   # pages with no banner.
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/clarity-health", waitUntil: networkIdle) {
     status
   }
   if(selector: "[id*=accept], [class*=accept], button[id*=cookie]", visible: true) {

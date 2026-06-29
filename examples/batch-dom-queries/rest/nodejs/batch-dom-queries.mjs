@@ -4,7 +4,7 @@
 // Run: node batch-dom-queries.mjs
 
 const query = `mutation BatchDOMQueries {
-  goto(url: "https://example.com", waitUntil: networkIdle) {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: networkIdle) {
     status
   }
   title {

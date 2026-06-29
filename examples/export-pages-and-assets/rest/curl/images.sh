@@ -7,7 +7,7 @@ TOKEN="YOUR_API_TOKEN_HERE"
 curl -X POST \
   "https://production-sfo.browserless.io/export?token=${TOKEN}" \
   -H "Content-Type: application/json" \
-  -d '{"url":"https://example.com","includeResources":true}' \
+  -d '{"url":"https://scraping-sandbox.netlify.app/harvest-direct","includeResources":true}' \
   --output page.zip
 
 echo "Saved page.zip"

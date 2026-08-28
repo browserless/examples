@@ -37,7 +37,8 @@ examples/my-use-case/
 │   │   ├── python/
 │   │   ├── java/
 │   │   └── csharp/
-│   └── go/             # chromedp
+│   ├── go/             # chromedp
+│   └── bap/            # BAP (@browserless.io/bap-ts)
 └── bql/                # BrowserQL mutations (.graphql files)
 ```
 
@@ -61,6 +62,7 @@ Only create the folders that apply. If a use case has no REST equivalent (e.g. r
 | `frameworks/playwright/java/` | `PascalCase.java` |
 | `frameworks/playwright/csharp/` | `PascalCase.cs` |
 | `frameworks/go/` | `main.go` |
+| `frameworks/bap/` | `<topic>.mjs` |
 | `bql/` | `<topic>.graphql` |
 
 ## Script conventions
@@ -129,6 +131,11 @@ frameworks/playwright/java/     → PascalCase.java
 frameworks/playwright/csharp/   → PascalCase.cs
 ```
 
+### BAP
+
+- Use `.mjs` (ESM) files with `@browserless.io/bap-ts` — the scripts run directly with `node`, no build step.
+- Connect to the `/chromium/bql` endpoint (or `/stealth/bql` for stealth use cases) via `Browserless.connect`.
+
 ### BQL
 
 - Use `.graphql` files for BQL mutations.
@@ -171,5 +178,6 @@ Available language icons:
 | Puppeteer | `chrome/chrome-original.svg` |
 | Playwright | `playwright/playwright-original.svg` |
 | BQL | `graphql/graphql-plain.svg` |
+| BAP | `typescript/typescript-original.svg` |
 
 Keep the rows in the README table alphabetical by use case title.

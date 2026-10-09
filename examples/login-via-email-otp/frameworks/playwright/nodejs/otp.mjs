@@ -3,8 +3,9 @@
 // the OTP field to appear, then reads and enters the code.
 //
 // Substitute getOtpFromInbox() with your actual inbox API (Mailosaur, Mailslurp,
-// Gmail API, IMAP, etc.). Poll after the OTP field appears — not before — to
-// avoid reading a stale code from an earlier session.
+// testmail.app, Mailpit, Gmail API, IMAP, etc.). Poll after the OTP field
+// appears — not before — to avoid reading a stale code from an earlier session.
+// For working versions, see otp-testmail.mjs and otp-mailpit.mjs.
 //
 // Install: npm install playwright-core
 // Run:     node otp.mjs

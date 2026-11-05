@@ -2,15 +2,15 @@
 
 Runnable code examples for common [Browserless](https://docs.browserless.io/examples) use cases. 
 
-For Node.js development, use **Node 26 LTS**, selected by `.node-version`.
+For Node.js development, use **Node 26 LTS**, selected by `.nvmrc`.
 The major-version default allows minor and patch updates; it is not a new
 minimum version for customers copying examples on Node 22, 24, or 26.
 Framework dependencies have their own Node.js requirements. Official Linux
 Node.js 26 binaries require `libatomic.so.1` (`libatomic1` on Debian/Ubuntu).
 The remote browser runs on Browserless; this setting selects the local script runtime.
 
-With nvm, run `nvm install "$(cat .node-version)"` from the repository root to
-install and select Node 26; nvm does not read `.node-version` automatically.
+With nvm, run `nvm install && nvm use` from the repository root to
+install and select Node 26 from `.nvmrc`.
 
 ## Getting Started
 

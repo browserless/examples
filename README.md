@@ -2,6 +2,12 @@
 
 Runnable code examples for common [Browserless](https://docs.browserless.io/examples) use cases. 
 
+For Node.js development, use **26.13.0** (`nvm install && nvm use`). This is a
+development default, not a new minimum version for customers copying examples.
+Framework dependencies have their own Node.js requirements. Official Linux
+Node.js 26 binaries require `libatomic.so.1` (`libatomic1` on Debian/Ubuntu).
+Browserless-hosted scripts use the service's runtime, not this local pin.
+
 ## Getting Started
 
 1. **Get an API token:** sign up at [browserless.io](https://browserless.io) and grab your token from the [account dashboard](https://account.browserless.io).

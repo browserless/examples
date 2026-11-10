@@ -4,6 +4,7 @@
 // Run:     node export-slide-deck.mjs
 
 import puppeteer from 'puppeteer-core';
+import { writeFileSync } from 'fs';
 
 const TOKEN = 'YOUR_API_TOKEN_HERE';
 const PRESENTATION_ID = 'YOUR_PRESENTATION_ID';
@@ -25,7 +26,6 @@ try {
     printBackground: true,
   });
 
-  import { writeFileSync } from 'fs';
   writeFileSync('slide-deck.pdf', pdf);
   console.log('Exported to slide-deck.pdf');
 } finally {

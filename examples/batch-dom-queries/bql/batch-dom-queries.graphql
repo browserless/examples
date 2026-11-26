@@ -5,9 +5,9 @@ mutation BatchDOMQueries {
   goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: domContentLoaded) {
     status
   }
-  heading: text(selector: "h1")
+  heading: text(selector: "h1") { text }
   links: mapSelector(selector: "a[href]") {
     innerText
-    href: attribute(name: "href")
+    href: attribute(name: "href") { value }
   }
 }

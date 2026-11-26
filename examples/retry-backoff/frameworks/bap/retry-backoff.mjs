@@ -28,7 +28,7 @@ const heading = await withRetry(async () => {
 
   try {
     const page = await browser.newPage();
-    await page.goto('https://scraping-sandbox.netlify.app/dashboard', { waitUntil: 'domContentLoaded' });
+    await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'domContentLoaded' });
     return await page.$eval('h1');
   } finally {
     // Always close to release the session even on error.

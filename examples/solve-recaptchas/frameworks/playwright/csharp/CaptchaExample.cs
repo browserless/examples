@@ -33,7 +33,7 @@ try
     // Register before navigation so the event isn't missed if the CAPTCHA
     // solves immediately after the page loads.
     var captchaSolved = new TaskCompletionSource<bool>();
-    cdp.On("Browserless.captchaAutoSolved", e => captchaSolved.TrySetResult(true));
+    cdp.Event("Browserless.captchaAutoSolved").OnEvent += (_, e) => captchaSolved.TrySetResult(true);
 
     await page.GotoAsync(
         "https://www.google.com/recaptcha/api2/demo",

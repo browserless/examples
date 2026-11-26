@@ -25,7 +25,9 @@ public class ScrapeWalmart {
             }
             """;
 
-        String payload = "{\"query\": " + com.google.gson.JsonParser.parseString(query) + ", \"variables\": {}, \"operationName\": \"ScrapeWalmart\"}";
+        // Escape the mutation into a JSON string value so no JSON library is needed.
+        String escapedQuery = query.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
+        String payload = "{\"query\": \"" + escapedQuery + "\", \"variables\": {}, \"operationName\": \"ScrapeWalmart\"}";
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()

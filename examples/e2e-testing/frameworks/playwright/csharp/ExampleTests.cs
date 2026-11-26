@@ -43,7 +43,8 @@ public class ExampleTests
     [OneTimeTearDown]
     public async Task OneTimeTearDown()
     {
-        await _playwright.DisposeAsync();
+        await _browser.CloseAsync();
+        _playwright.Dispose();
     }
 
     [Test]

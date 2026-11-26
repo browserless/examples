@@ -1,5 +1,7 @@
 // Playwright configuration for running tests against a remote Browserless browser.
-// Run: npx playwright test
+// Reads your API token from the BROWSERLESS_TOKEN environment variable.
+//
+// Run: BROWSERLESS_TOKEN=YOUR_API_TOKEN_HERE npx playwright test
 
 import { defineConfig } from '@playwright/test';
 

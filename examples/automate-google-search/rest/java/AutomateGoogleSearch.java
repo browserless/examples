@@ -9,7 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class GoogleSearch {
+public class AutomateGoogleSearch {
     public static void main(String[] args) throws Exception {
         String endpoint = "https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE";
 

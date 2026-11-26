@@ -3,7 +3,7 @@
 // Run: node scrape-linkedin-jobs.mjs
 
 const query = `mutation ScrapeLinkedInJobs {
-  goto(url: "https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States", waitUntil: networkIdle) {
+  goto(url: "https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: ".base-card", timeout: 15000) {
@@ -25,15 +25,9 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeLinkedInJobs' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 
 const { data } = await response.json();
-const jobs = data.jobs.map((j) => ({
-  title: j.title?.[0]?.innerText ?? '',
-  company: j.company?.[0]?.innerText ?? '',
-  location: j.location?.[0]?.innerText ?? '',
-  posted: j.posted?.[0]?.innerText ?? '',
-}));
-console.log(JSON.stringify(jobs, null, 2));
+console.log(JSON.stringify(data.jobs, null, 2));

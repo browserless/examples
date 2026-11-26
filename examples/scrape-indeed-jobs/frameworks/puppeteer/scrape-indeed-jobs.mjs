@@ -1,4 +1,4 @@
-// Scrapes Indeed job listings using BQL with stealth mode and residential proxy.
+// Scrapes Indeed job listings using Puppeteer with stealth mode and residential proxy.
 //
 // Install: npm install puppeteer-core
 // Run:     node scrape-indeed-jobs.mjs
@@ -13,7 +13,7 @@ const browser = await puppeteer.connect({
 try {
   const page = await browser.newPage();
   await page.goto('https://www.indeed.com/jobs?q=data+scientist&l=Remote', {
-    waitUntil: 'networkidle2',
+    waitUntil: 'domcontentloaded',
   });
 
   await page.waitForSelector('.job_seen_beacon');
@@ -21,9 +21,10 @@ try {
   const jobs = await page.evaluate(() =>
     Array.from(document.querySelectorAll('.job_seen_beacon')).map((card) => ({
       title: card.querySelector('.jobTitle a span')?.innerText?.trim() ?? '',
-      company: card.querySelector('.companyName')?.innerText?.trim() ?? '',
-      location: card.querySelector('.companyLocation')?.innerText?.trim() ?? '',
+      company: card.querySelector('[data-testid=company-name]')?.innerText?.trim() ?? '',
+      location: card.querySelector('[data-testid=text-location]')?.innerText?.trim() ?? '',
       salary: card.querySelector('.salary-snippet-container')?.innerText?.trim() ?? '',
+      link: card.querySelector('.jobTitle a')?.href ?? '',
     }))
   );
 

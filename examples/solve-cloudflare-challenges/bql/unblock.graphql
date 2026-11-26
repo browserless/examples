@@ -12,14 +12,16 @@
 # solve.time   — milliseconds taken to solve the challenge
 
 mutation UnblockCloudflare {
-  goto(url: "https://example-cloudflare-protected.com", waitUntil: networkIdle) {
+  goto(url: "https://www.scrapingcourse.com/cloudflare-challenge", waitUntil: networkIdle) {
     status
   }
+
   solve(type: cloudflare) {
     found
     solved
     time
   }
+
   title {
     title
   }

@@ -22,7 +22,7 @@ const query = `mutation HealthcarePortal {
     time
   }
   medications: mapSelector(selector: "#medicationlist table tbody tr") {
-    medication: mapSelector(selector: "td:nth-child(1)") { innerText }
+    medication: mapSelector(selector: "td:nth-child(1) strong") { innerText }
     dosage: mapSelector(selector: "td:nth-child(2)") { innerText }
     frequency: mapSelector(selector: "td:nth-child(3)") { innerText }
     prescriber: mapSelector(selector: "td:nth-child(4)") { innerText }
@@ -35,7 +35,7 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'HealthcarePortal' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 

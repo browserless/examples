@@ -11,17 +11,23 @@ public class ScrapeWalmart {
         String endpoint = "https://production-sfo.browserless.io/stealth/bql?token="
             + token + "&proxy=residential&proxyCountry=us";
 
-        String query = "mutation ScrapeWalmart {"
-            + " goto(url: \\\"https://www.walmart.com/search?q=coffee+maker\\\", waitUntil: networkIdle) { status }"
-            + " waitForTimeout(time: 2000) { time }"
-            + " products: mapSelector(selector: \\\"[data-item-id]\\\") {"
-            + "   title: mapSelector(selector: \\\"[data-automation-id='product-title']\\\") { innerText }"
-            + "   price: mapSelector(selector: \\\"[itemprop='price']\\\") { innerText }"
-            + "   rating: mapSelector(selector: \\\"[data-testid='product-ratings']\\\") { innerText }"
-            + " }"
-            + " }";
+        String query = """
+            mutation ScrapeWalmart {
+              goto(url: "https://www.walmart.com/search?q=iphone", waitUntil: domContentLoaded) { status }
+              waitForTimeout(time: 3000) { time }
+              products: mapSelector(selector: "[data-item-id]") {
+                name: mapSelector(selector: "[data-automation-id='product-title']") { innerText }
+                price: mapSelector(selector: "[data-testid='unified-global-product-price-a11y-text']") { innerText }
+                rating: mapSelector(selector: "[data-testid='product-ratings']") { innerText }
+                reviewCount: mapSelector(selector: "[data-testid='product-reviews']") { innerText }
+                link: mapSelector(selector: "a[href*='/ip/']") { href: attribute(name: "href") { value } }
+              }
+            }
+            """;
 
-        String payload = "{\"query\": \"" + query + "\", \"variables\": {}, \"operationName\": \"ScrapeWalmart\"}";
+        // Escape the mutation into a JSON string value so no JSON library is needed.
+        String escapedQuery = query.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
+        String payload = "{\"query\": \"" + escapedQuery + "\", \"variables\": {}, \"operationName\": \"ScrapeWalmart\"}";
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()

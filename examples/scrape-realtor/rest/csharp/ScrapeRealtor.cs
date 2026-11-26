@@ -12,23 +12,17 @@ string endpoint = $"https://production-sfo.browserless.io/stealth/bql?token={tok
 var payload = new
 {
     query = @"mutation ScrapeRealtor {
-  goto(url: ""https://www.realtor.com/realestateandhomes-search/San-Francisco_CA"", waitUntil: networkIdle) {
-    status
-  }
-  waitForSelector(selector: ""[data-testid=card-content]"", timeout: 15000) {
-    time
-  }
-  properties: mapSelector(selector: ""[data-testid=card-content]"") {
-    price: mapSelector(selector: ""[data-testid=card-price]"") { innerText }
-    address: mapSelector(selector: ""[data-testid=card-address]"") { innerText }
-    beds: mapSelector(selector: ""[data-testid=property-meta-beds] span"") { innerText }
-    baths: mapSelector(selector: ""[data-testid=property-meta-baths] span"") { innerText }
-    sqft: mapSelector(selector: ""[data-testid=property-meta-sqft] span"") { innerText }
-    status: mapSelector(selector: ""[data-testid=card-description]"") { innerText }
-  }
-}",
+      goto(url: ""https://www.realtor.com/realestateandhomes-search/San-Francisco_CA"", waitUntil: domContentLoaded) { status }
+      waitForSelector(selector: ""[data-testid=property-card]"", timeout: 15000) { time }
+      properties: mapSelector(selector: ""[data-testid=property-card]"") {
+        price: mapSelector(selector: "".fs_700"") { innerText }
+        address: mapSelector(selector: ""a .sr_true"") { innerText }
+        beds: mapSelector(selector: ""[data-testid=property-meta-beds] [data-testid=meta-value]"") { innerText }
+        baths: mapSelector(selector: ""[data-testid=property-meta-baths] [data-testid=meta-value]"") { innerText }
+        sqft: mapSelector(selector: ""[data-testid=property-meta-sqft] [data-testid=meta-value]"") { innerText }
+      }
+    }",
     variables = new { },
-    operationName = "ScrapeRealtor",
 };
 
 using (HttpClient httpClient = new HttpClient())

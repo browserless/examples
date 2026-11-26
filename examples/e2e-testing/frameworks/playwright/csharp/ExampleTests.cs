@@ -4,7 +4,12 @@
 
 using Microsoft.Playwright;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
+[Parallelizable(ParallelScope.Self)]
 [TestFixture]
 public class ExampleTests
 {
@@ -14,45 +19,69 @@ public class ExampleTests
     private IPage _page;
 
     [OneTimeSetUp]
-    public async Task Setup()
+    public async Task OneTimeSetUp()
     {
-        string token = "YOUR_API_TOKEN_HERE";
         _playwright = await Playwright.CreateAsync();
         _browser = await _playwright.Chromium.ConnectAsync(
-            $"wss://production-sfo.browserless.io/chromium/playwright?token={token}"
+            "wss://production-sfo.browserless.io/chromium/playwright?token=YOUR_API_TOKEN_HERE"
         );
     }
 
     [SetUp]
-    public async Task CreatePage()
+    public async Task SetUp()
     {
         _context = await _browser.NewContextAsync();
         _page = await _context.NewPageAsync();
     }
 
     [TearDown]
-    public async Task ClosePage() => await _context.CloseAsync();
+    public async Task TearDown()
+    {
+        await _context.CloseAsync();
+    }
 
     [OneTimeTearDown]
-    public async Task Teardown()
+    public async Task OneTimeTearDown()
     {
-        await _browser.CloseAsync();
-        _playwright.Dispose();
+        // One-time teardown also runs when setup failed, so either field may be null.
+        if (_browser is not null) await _browser.CloseAsync();
+        _playwright?.Dispose();
     }
 
     [Test]
-    public async Task HomepageLoads()
+    public async Task PageHasCorrectTitle()
     {
-        await _page.GotoAsync("https://automationexercise.com");
-        StringAssert.Contains("Automation", await _page.TitleAsync());
+        await _page.GotoAsync("https://scraping-sandbox.netlify.app/products");
+        await Assertions.Expect(_page).ToHaveTitleAsync(new Regex("Product Catalog"));
     }
 
     [Test]
-    public async Task ProductsPageShowsItems()
+    public async Task HeadingIsVisible()
     {
-        await _page.GotoAsync("https://automationexercise.com/products");
-        await _page.WaitForSelectorAsync(".features_items");
-        var products = await _page.QuerySelectorAllAsync(".product-image-wrapper");
-        Assert.That(products.Count, Is.GreaterThan(0));
+        await _page.GotoAsync("https://scraping-sandbox.netlify.app/products");
+        var heading = _page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync();
+        await Assertions.Expect(heading).ToHaveTextAsync("Product Catalog");
+    }
+
+    [Test]
+    public async Task PageHasLink()
+    {
+        await _page.GotoAsync("https://scraping-sandbox.netlify.app/products");
+        await Assertions.Expect(_page.Locator("a[href]").First).ToBeVisibleAsync();
+    }
+
+    [Test]
+    public async Task PageLoadsWithoutAnalytics()
+    {
+        var blocked = new List<string>();
+        await _page.RouteAsync("**/analytics/**", async route =>
+        {
+            blocked.Add(route.Request.Url);
+            await route.AbortAsync();
+        });
+        await _page.GotoAsync("https://scraping-sandbox.netlify.app/products");
+        await Assertions.Expect(_page).ToHaveTitleAsync(new Regex("Product Catalog"));
+        Console.WriteLine($"Blocked {blocked.Count} analytics request(s)");
     }
 }

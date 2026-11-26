@@ -3,18 +3,17 @@
 // Run: node scrape-ticketmaster.mjs
 
 const query = `mutation ScrapeTicketmaster {
-  goto(url: "https://www.ticketmaster.com/search?q=concerts", waitUntil: networkIdle) {
+  goto(url: "https://www.ticketmaster.com/search?q=concerts", waitUntil: domContentLoaded) {
     status
   }
-  waitForSelector(selector: "[data-testid=search-event-card]", timeout: 15000) {
+  waitForSelector(selector: "[data-testid=eventList] > li", timeout: 15000) {
     time
   }
-  events: mapSelector(selector: "[data-testid=search-event-card]") {
-    name: mapSelector(selector: "[data-testid=event-name]") { innerText }
-    date: mapSelector(selector: "[data-testid=event-date]") { innerText }
-    venue: mapSelector(selector: "[data-testid=event-venue]") { innerText }
-    price: mapSelector(selector: "[data-testid=event-price]") { innerText }
-    link: mapSelector(selector: "a") {
+  events: mapSelector(selector: "[data-testid=eventList] > li") {
+    name: mapSelector(selector: "button[aria-controls=eventOverflow] + span") { innerText }
+    date: mapSelector(selector: "li > div > div > span:first-child") { innerText }
+    venue: mapSelector(selector: "button[aria-controls=eventOverflow] + span + span span:last-child") { innerText }
+    link: mapSelector(selector: "[data-testid=event-list-link]") {
       href: attribute(name: "href") { value }
     }
   }
@@ -25,15 +24,9 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeTicketmaster' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 
 const { data } = await response.json();
-const events = data.events.map((e) => ({
-  name: e.name?.[0]?.innerText ?? '',
-  date: e.date?.[0]?.innerText ?? '',
-  venue: e.venue?.[0]?.innerText ?? '',
-  price: e.price?.[0]?.innerText ?? '',
-}));
-console.log(JSON.stringify(events, null, 2));
+console.log(JSON.stringify(data.events, null, 2));

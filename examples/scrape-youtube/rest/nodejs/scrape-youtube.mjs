@@ -1,25 +1,23 @@
-// Scrapes YouTube search results using BQL with stealth mode.
+// Scrapes title, channel, views, likes, and upload date from a YouTube video page using BQL with stealth mode.
 //
 // Run: node scrape-youtube.mjs
 
-const query = `mutation ScrapeYouTube {
-  goto(url: "https://www.youtube.com/results?search_query=javascript+tutorial", waitUntil: networkIdle) {
+const query = `mutation ScrapeYouTubeVideo {
+  goto(url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", waitUntil: domContentLoaded) {
     status
   }
-  waitForTimeout(time: 2000) {
+  waitForSelector(selector: "#view-count[aria-label]", timeout: 20000) {
     time
   }
-  videos: mapSelector(selector: "ytd-video-renderer") {
-    title: mapSelector(selector: "#video-title") {
-      innerText
-    }
-    channel: mapSelector(selector: "[id='channel-name']") {
-      innerText
-    }
-    views: mapSelector(selector: "span.inline-metadata-item") {
-      innerText
-    }
+  title: text(selector: "h1.ytd-watch-metadata yt-formatted-string") { text }
+  channel: text(selector: "ytd-channel-name yt-formatted-string a") { text }
+  views: mapSelector(selector: "#view-count") {
+    label: attribute(name: "aria-label") { value }
   }
+  likes: mapSelector(selector: "#top-level-buttons-computed like-button-view-model button") {
+    label: attribute(name: "aria-label") { value }
+  }
+  uploadDate: text(selector: "#info-strings yt-formatted-string") { text }
 }`;
 
 const response = await fetch(
@@ -27,14 +25,9 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeYouTube' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 
-const { data } = await response.json();
-const videos = data.videos.map((v) => ({
-  title: v.title?.[0]?.innerText ?? '',
-  channel: v.channel?.[0]?.innerText ?? '',
-  views: v.views?.[0]?.innerText ?? '',
-}));
-console.log(JSON.stringify(videos, null, 2));
+const result = await response.json();
+console.log(JSON.stringify(result, null, 2));

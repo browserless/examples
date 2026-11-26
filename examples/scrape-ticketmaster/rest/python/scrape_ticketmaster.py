@@ -7,18 +7,17 @@ import requests
 
 query = """
 mutation ScrapeTicketmaster {
-  goto(url: "https://www.ticketmaster.com/search?q=concerts", waitUntil: networkIdle) {
+  goto(url: "https://www.ticketmaster.com/search?q=concerts", waitUntil: domContentLoaded) {
     status
   }
-  waitForSelector(selector: "[data-testid=search-event-card]", timeout: 15000) {
+  waitForSelector(selector: "[data-testid=eventList] > li", timeout: 15000) {
     time
   }
-  events: mapSelector(selector: "[data-testid=search-event-card]") {
-    name: mapSelector(selector: "[data-testid=event-name]") { innerText }
-    date: mapSelector(selector: "[data-testid=event-date]") { innerText }
-    venue: mapSelector(selector: "[data-testid=event-venue]") { innerText }
-    price: mapSelector(selector: "[data-testid=event-price]") { innerText }
-    link: mapSelector(selector: "a") {
+  events: mapSelector(selector: "[data-testid=eventList] > li") {
+    name: mapSelector(selector: "button[aria-controls=eventOverflow] + span") { innerText }
+    date: mapSelector(selector: "li > div > div > span:first-child") { innerText }
+    venue: mapSelector(selector: "button[aria-controls=eventOverflow] + span + span span:last-child") { innerText }
+    link: mapSelector(selector: "[data-testid=event-list-link]") {
       href: attribute(name: "href") { value }
     }
   }
@@ -32,13 +31,12 @@ response = requests.post(
         'proxy': 'residential',
         'proxyCountry': 'us',
     },
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeTicketmaster'},
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
 for event in data['events']:
-    name = event['name'][0]['innerText'] if event['name'] else ''
-    date = event['date'][0]['innerText'] if event['date'] else ''
+    name = event['name'][0]['innerText']
+    date = event['date'][0]['innerText']
     venue = event['venue'][0]['innerText'] if event['venue'] else ''
-    price = event['price'][0]['innerText'] if event['price'] else ''
-    print(f'{name} — {date} — {venue} — {price}')
+    print(f'{name} | {date} | {venue}')

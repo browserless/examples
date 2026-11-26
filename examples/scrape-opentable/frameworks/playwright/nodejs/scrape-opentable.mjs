@@ -1,4 +1,4 @@
-// Scrapes OpenTable restaurant listings using BQL with stealth mode and residential proxy.
+// Scrapes OpenTable restaurant listings using Playwright with stealth mode and residential proxy.
 //
 // Install: npm install playwright-core
 // Run:     node scrape-opentable.mjs
@@ -6,24 +6,28 @@
 import { chromium } from 'playwright-core';
 
 const browser = await chromium.connectOverCDP(
-  'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE&stealth&proxy=residential&proxyCountry=us'
+  'wss://production-sfo.browserless.io/stealth?token=YOUR_API_TOKEN_HERE&proxy=residential&proxyCountry=us'
 );
 
 try {
   const context = browser.contexts()[0];
   const page = await context.newPage();
   await page.goto('https://www.opentable.com/s?term=italian&covers=2', {
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
+    timeout: 60000,
   });
 
-  await page.waitForSelector('[data-test=restaurant-card]');
+  // Results render client-side a few seconds after the DOM loads.
+  await page.waitForSelector('[data-test="restaurant-card"]:has(h6)', { timeout: 60000 });
 
   const restaurants = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('[data-test="restaurant-card"]')).map((card) => ({
-      name: card.querySelector('h2')?.innerText?.trim() ?? '',
-      rating: card.querySelector('[data-test="rating-score"]')?.innerText?.trim() ?? '',
-      cuisine: card.querySelector('[data-test="cuisine"]')?.innerText?.trim() ?? '',
-      priceRange: card.querySelector('[data-test="price-range"]')?.innerText?.trim() ?? '',
+    Array.from(document.querySelectorAll('[data-test="restaurant-card"]:has(h6)')).map((card) => ({
+      name: card.querySelector('h6')?.innerText?.trim() ?? '',
+      // The summary line reads "4.8 (1,573) • $$ • Italian • <neighborhood>".
+      rating: card.querySelector('[data-testid="search-list-card-content-container"] > div:nth-child(2)')
+        ?.innerText?.trim().split(' ')[0] ?? '',
+      cuisine: card.querySelector('[aria-label^="Price"] + span')?.innerText?.trim() ?? '',
+      priceRange: card.querySelector('[aria-label^="Price"]')?.innerText?.trim() ?? '',
     }))
   );
 

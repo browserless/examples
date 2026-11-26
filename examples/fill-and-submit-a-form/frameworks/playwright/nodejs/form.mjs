@@ -9,19 +9,23 @@ import { chromium } from 'playwright-core';
 const browser = await chromium.connect(
   'wss://production-sfo.browserless.io/chromium/playwright?token=YOUR_API_TOKEN_HERE'
 );
+
 try {
   const page = await browser.newPage();
-  await page.goto('https://www.browserless.io/practice-form', {
-    waitUntil: 'networkidle',
-  });
+  await page.goto('https://httpbin.org/forms/post', { waitUntil: 'domcontentloaded' });
 
-  await page.fill('#Email', 'user@example.com');
-  await page.fill('#Message', 'Hello from Browserless!');
-  await page.selectOption('select#Subject', 'Support');
-  await page.click("button[type='submit']");
-  await page.waitForLoadState('networkidle');
+  await page.fill('input[name="custname"]', 'Jane Doe');
+  await page.fill('input[name="custemail"]', 'jane@example.com');
+  await page.check('input[value="medium"]');
+  await page.check('input[value="cheese"]');
+  await page.fill('textarea[name="comments"]', 'Hello from Browserless!');
 
-  console.log('Form submitted, current URL:', page.url());
+  await page.click('form button');
+  await page.waitForURL('**/post');
+
+  // httpbin echoes the submission as JSON; `form` holds the posted fields.
+  const body = await page.locator('body').innerText();
+  console.log(JSON.parse(body).form);
 } finally {
   // Always close to release the session even on error.
   await browser.close();

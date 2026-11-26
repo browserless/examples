@@ -6,24 +6,28 @@
 
 import { chromium } from 'playwright-core';
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-
-const browser = await chromium.connectOverCDP(
-  `wss://production-sfo.browserless.io?token=${TOKEN}`
+const browser = await chromium.connect(
+  'wss://production-sfo.browserless.io/chromium/playwright?token=YOUR_API_TOKEN_HERE'
 );
 
 try {
-  const context = browser.contexts()[0] ?? await browser.newContext();
-  const page = await context.newPage();
+  const page = await browser.newPage();
+  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'domcontentloaded' });
 
-  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'networkidle' });
+  // Approach 1 — works when you don't know the destination URL:
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.click('a[href="/contact-us"]'),
+  ]);
 
-  // Playwright waits for navigation automatically after click.
-  await page.click('a');
-  await page.waitForLoadState('networkidle');
+  // Approach 2 — simpler when you know the destination URL pattern:
+  // await page.click('a[href="/contact-us"]');
+  // await page.waitForURL('**/contact-us');
 
-  console.log('Navigated to:', page.url());
-  console.log('Page title:', await page.title());
+  const heading = await page.$eval('h1', el => el.textContent.trim());
+  console.log('URL:', page.url());
+  console.log('Heading:', heading);
 } finally {
+  // Always close to release the session even on error.
   await browser.close();
 }

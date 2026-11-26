@@ -1,4 +1,4 @@
-// Scrapes Amazon product listings using BQL with stealth mode and residential proxy.
+// Scrapes Amazon product listings using Puppeteer with stealth mode and residential proxy.
 //
 // Install: npm install puppeteer-core
 // Run:     node scrape-amazon.mjs
@@ -13,18 +13,20 @@ const browser = await puppeteer.connect({
 try {
   const page = await browser.newPage();
   await page.goto('https://www.amazon.com/s?k=wireless+headphones', {
-    waitUntil: 'networkidle2',
+    waitUntil: 'domcontentloaded',
   });
 
-  await page.waitForSelector('div.s-result-item[data-asin]');
+  await page.waitForSelector('[data-component-type="s-search-result"]');
 
   const products = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('div.s-result-item[data-asin]')).map((item) => ({
-      asin: item.getAttribute('data-asin') ?? '',
-      title: item.querySelector('h2 span')?.innerText?.trim() ?? '',
-      price: item.querySelector('.a-price .a-offscreen')?.innerText?.trim() ?? '',
-      rating: item.querySelector('.a-icon-alt')?.innerText?.trim() ?? '',
-    }))
+    Array.from(document.querySelectorAll('[data-component-type="s-search-result"]'))
+      .filter((el) => el.getAttribute('data-asin'))
+      .map((el) => ({
+        asin: el.getAttribute('data-asin'),
+        title: el.querySelector('h2 span')?.innerText?.trim() ?? '',
+        price: el.querySelector('.a-price .a-offscreen')?.innerText?.trim() ?? '',
+        rating: el.querySelector('.a-icon-alt')?.innerText?.trim() ?? '',
+      }))
   );
 
   console.log(JSON.stringify(products, null, 2));

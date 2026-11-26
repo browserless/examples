@@ -13,7 +13,7 @@ const browser = Browserless.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://example-cloudflare-protected.com', { waitUntil: 'networkIdle' });
+  await page.goto('https://www.scrapingcourse.com/cloudflare-challenge', { waitUntil: 'networkIdle' });
 
   const { found, solved } = await page.solve({ type: 'cloudflare' });
   console.log({ found, solved, title: await page.title() });

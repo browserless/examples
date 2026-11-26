@@ -8,11 +8,10 @@
 import fs from 'fs';
 import { chromium } from 'playwright-core';
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-
 const browser = await chromium.connectOverCDP(
-  `wss://production-sfo.browserless.io?token=${TOKEN}&headless=false&stealth&record=true`
+  'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE&headless=false&stealth&record=true'
 );
+
 try {
   const context = browser.contexts()[0];
   const page = context.pages()[0];
@@ -20,19 +19,20 @@ try {
   // Set viewport before starting — dimensions are fixed for the entire recording.
   await page.setViewportSize({ width: 1280, height: 720 });
 
-  const cdp = await context.newCDPSession(page);
+  const cdp = await page.context().newCDPSession(page);
   await cdp.send('Browserless.startRecording');
 
-  await page.goto('https://scraping-sandbox.netlify.app/login', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/login');
   await new Promise(r => setTimeout(r, 2000));
-
-  await page.goto('https://scraping-sandbox.netlify.app/contact-us', { waitUntil: 'networkidle' });
+  await page.goto('https://scraping-sandbox.netlify.app/contact-us');
   await new Promise(r => setTimeout(r, 2000));
 
   // base64 encoding is required — CDP can't transfer raw binary over its text protocol.
   const { value } = await cdp.send('Browserless.stopRecording', { encoding: 'base64' });
+
   fs.writeFileSync('recording.webm', Buffer.from(value, 'base64'));
   console.log('Recording saved to recording.webm');
 } finally {
+  // Always close to release the session even on error.
   await browser.close();
 }

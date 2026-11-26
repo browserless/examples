@@ -1,40 +1,26 @@
-# Retries a Browserless BQL request with exponential backoff on failure.
+# Retries a Browserless /screenshot request with exponential backoff on failure.
 #
 # Install: pip install requests
 # Run:     python retry_backoff.py
 
-import requests
 import time
+import requests
 
-TOKEN = 'YOUR_API_TOKEN_HERE'
-BQL_URL = f'https://production-sfo.browserless.io/bql?token={TOKEN}'
+def with_retry(fn, retries=3, base_delay=0.5):
+    for attempt in range(retries + 1):
+        response = fn()
+        if response.status_code == 429 or not response.ok:
+            if attempt == retries:
+                response.raise_for_status()
+            time.sleep(base_delay * (2 ** attempt))
+            continue
+        return response
 
-MAX_RETRIES = 5
-BASE_DELAY = 1  # seconds
+response = with_retry(lambda: requests.post(
+    'https://production-sfo.browserless.io/screenshot?token=YOUR_API_TOKEN_HERE',
+    headers={'Content-Type': 'application/json'},
+    json={'url': 'https://scraping-sandbox.netlify.app/dashboard'},
+))
 
-query = """
-mutation {
-  goto(url: "https://scraping-sandbox.netlify.app/dashboard", waitUntil: networkIdle) { status }
-  title { title }
-}
-"""
-
-delay = BASE_DELAY
-for attempt in range(1, MAX_RETRIES + 1):
-    try:
-        response = requests.post(
-            BQL_URL,
-            json={'query': query, 'variables': {}},
-            timeout=30,
-        )
-        response.raise_for_status()
-        data = response.json()['data']
-        print(f'Success on attempt {attempt}.')
-        print('Title:', data['title']['title'])
-        break
-    except Exception as e:
-        if attempt == MAX_RETRIES:
-            raise
-        print(f'Attempt {attempt} failed: {e}. Retrying in {delay}s...')
-        time.sleep(delay)
-        delay *= 2
+with open('screenshot.png', 'wb') as f:
+    f.write(response.content)

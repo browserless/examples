@@ -18,7 +18,7 @@ http.use_ssl = true
 request = Net::HTTP::Post.new(uri)
 request['Content-Type'] = 'application/json'
 request.body = JSON.generate({
-  url: 'https://example-cloudflare-protected.com',
+  url: 'https://www.scrapingcourse.com/cloudflare-challenge',
   content: true,
   cookies: false,
   screenshot: false,

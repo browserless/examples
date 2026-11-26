@@ -3,17 +3,24 @@
 # Install: pip install requests
 # Run:     python scrape_booking.py
 
+from datetime import date, timedelta
+
 import requests
 
+# Booking.com only shows prices for future stays, so search 30 days from today.
+checkin = date.today() + timedelta(days=30)
+checkout = checkin + timedelta(days=1)
+url = (
+    'https://www.booking.com/searchresults.html?ss=New+York'
+    f'&checkin={checkin}&checkout={checkout}&group_adults=2'
+)
+
 query = """
-mutation ScrapeBooking {
-  goto(
-    url: "https://www.booking.com/searchresults.html?ss=New+York&checkin=2025-09-01&checkout=2025-09-07&group_adults=2"
-    waitUntil: networkIdle
-  ) {
+mutation ScrapeBooking($url: String!) {
+  goto(url: $url, waitUntil: domContentLoaded) {
     status
   }
-  waitForTimeout(time: 3000) {
+  waitForSelector(selector: "[data-testid='property-card']", timeout: 30000) {
     time
   }
   hotels: mapSelector(selector: "[data-testid='property-card']") {
@@ -23,7 +30,10 @@ mutation ScrapeBooking {
     price: mapSelector(selector: "[data-testid='price-and-discounted-price']") {
       innerText
     }
-    rating: mapSelector(selector: "[data-testid='review-score']") {
+    rating: mapSelector(selector: "[data-testid='review-score'] [aria-hidden='true']") {
+      innerText
+    }
+    location: mapSelector(selector: "[data-testid='address-link']") {
       innerText
     }
   }
@@ -37,7 +47,7 @@ response = requests.post(
         'proxy': 'residential',
         'proxyCountry': 'us',
     },
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeBooking'},
+    json={'query': query, 'variables': {'url': url}},
 )
 
 data = response.json()['data']
@@ -45,4 +55,5 @@ for hotel in data['hotels']:
     name = hotel['name'][0]['innerText'] if hotel['name'] else ''
     price = hotel['price'][0]['innerText'] if hotel['price'] else ''
     rating = hotel['rating'][0]['innerText'] if hotel['rating'] else ''
-    print(f'{name} — {price} — {rating}')
+    location = hotel['location'][0]['innerText'] if hotel['location'] else ''
+    print(f'{name} — {price} — {rating} — {location}')

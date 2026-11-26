@@ -2,28 +2,28 @@
 # BQL IDE:  https://account.browserless.io/bql
 
 mutation FormExample {
-  goto(url: "https://www.browserless.io/practice-form") {
+  goto(url: "https://httpbin.org/forms/post", waitUntil: domContentLoaded) {
     status
   }
-
-  typeEmail: type(text: "user@example.com", selector: "#Email") {
+  typeName: type(selector: "input[name=custname]", text: "Jane Doe") {
     time
   }
-
-  typeMessage: type(selector: "#Message", text: "Hello from Browserless!") {
+  typeEmail: type(selector: "input[name=custemail]", text: "jane@example.com") {
     time
   }
-
-  subject: select(selector: "select#Subject", value: "Support") {
-    selector
-  }
-
-  solve {
+  chooseSize: click(selector: "input[value=medium]") {
     time
-    solved
   }
-
-  submitForm: click(selector: "button[type='submit']") {
+  addTopping: checkbox(selector: "input[value=cheese]", checked: true) {
     time
+  }
+  typeComments: type(selector: "textarea[name=comments]", text: "Hello from Browserless!") {
+    time
+  }
+  submitForm: click(selector: "form button") {
+    time
+  }
+  response: text(selector: "body") {
+    text
   }
 }

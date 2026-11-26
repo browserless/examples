@@ -27,7 +27,7 @@ public class CloudflareUnblock {
         String TOKEN = "YOUR_API_TOKEN_HERE";
         HttpClient client = HttpClient.newHttpClient();
 
-        String body = "{\"url\":\"https://example-cloudflare-protected.com\","
+        String body = "{\"url\":\"https://www.scrapingcourse.com/cloudflare-challenge\","
             + "\"browserWSEndpoint\":true,\"ttl\":30000}";
         HttpRequest req = HttpRequest.newBuilder()
             .uri(URI.create("https://production-sfo.browserless.io/unblock?token=" + TOKEN + "&proxy=residential"))

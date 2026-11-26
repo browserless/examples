@@ -14,14 +14,19 @@ const browser = Browserless.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { waitUntil: 'networkIdle' });
-  await page.waitForSelector('h1.ytd-watch-metadata', { timeout: 10000 });
+  await page.goto('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { waitUntil: 'domContentLoaded' });
+  await page.waitForSelector('#view-count[aria-label]', { timeout: 20000 });
 
   console.log({
     title: await page.$eval('h1.ytd-watch-metadata yt-formatted-string'),
     channel: await page.$eval('ytd-channel-name yt-formatted-string a'),
-    views: await page.$eval('.ytd-video-view-count-renderer .view-count'),
-    likes: await page.$eval('ytd-segmented-like-dislike-button-renderer yt-formatted-string'),
+    // Views and likes render as animated counters, so read their accessible labels instead.
+    views: await page.evaluate(
+      `document.querySelector('#view-count').getAttribute('aria-label')`
+    ),
+    likes: await page.evaluate(
+      `document.querySelector('#top-level-buttons-computed like-button-view-model button').getAttribute('aria-label')`
+    ),
     uploadDate: await page.$eval('#info-strings yt-formatted-string'),
   });
 } finally {

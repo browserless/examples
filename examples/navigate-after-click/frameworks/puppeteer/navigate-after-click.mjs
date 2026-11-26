@@ -5,24 +5,28 @@
 
 import puppeteer from 'puppeteer-core';
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-
 const browser = await puppeteer.connect({
-  browserWSEndpoint: `wss://production-sfo.browserless.io?token=${TOKEN}`,
+  browserWSEndpoint: 'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE',
 });
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'networkidle2' });
+  await page.goto('https://scraping-sandbox.netlify.app/products', { waitUntil: 'domcontentloaded' });
 
-  // Click the link and wait for navigation in parallel.
+  // Wrong — navigation may finish between these two lines:
+  // await page.click('a[href="/contact-us"]');
+  // await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+
+  // Right — Promise.all starts the wait before the click fires:
   await Promise.all([
-    page.waitForNavigation({ waitUntil: 'networkidle2' }),
-    page.click('a'),
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.click('a[href="/contact-us"]'),
   ]);
 
-  console.log('Navigated to:', page.url());
-  console.log('Page title:', await page.title());
+  const heading = await page.$eval('h1', el => el.textContent.trim());
+  console.log('URL:', page.url());
+  console.log('Heading:', heading);
 } finally {
+  // Always close to release the session even on error.
   await browser.close();
 }

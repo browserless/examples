@@ -20,7 +20,7 @@ class CloudflareUnblock
         using var httpClient = new HttpClient();
 
         var body = new StringContent(
-            "{\"url\":\"https://example-cloudflare-protected.com\",\"browserWSEndpoint\":true,\"ttl\":30000}",
+            "{\"url\":\"https://www.scrapingcourse.com/cloudflare-challenge\",\"browserWSEndpoint\":true,\"ttl\":30000}",
             Encoding.UTF8, "application/json");
         var res = await httpClient.PostAsync(
             $"https://production-sfo.browserless.io/unblock?token={TOKEN}&proxy=residential",

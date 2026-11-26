@@ -7,7 +7,7 @@ import requests
 
 query = """
 mutation ScrapeIMDb {
-  goto(url: "https://www.imdb.com/chart/top/", waitUntil: networkIdle) {
+  goto(url: "https://www.imdb.com/chart/top/", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: ".ipc-metadata-list-summary-item", timeout: 15000) {
@@ -15,7 +15,7 @@ mutation ScrapeIMDb {
   }
   movies: mapSelector(selector: ".ipc-metadata-list-summary-item") {
     title: mapSelector(selector: ".ipc-title__text") { innerText }
-    metadata: mapSelector(selector: ".cli-title-metadata span") { innerText }
+    metadata: mapSelector(selector: ".cli-title-metadata li") { innerText }
     rating: mapSelector(selector: ".ipc-rating-star--imdb") {
       ratingLabel: attribute(name: "aria-label") { value }
     }
@@ -30,12 +30,12 @@ response = requests.post(
         'proxy': 'residential',
         'proxyCountry': 'us',
     },
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeIMDb'},
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
 for movie in data['movies']:
-    title = movie['title'][0]['innerText'] if movie['title'] else ''
-    rating = movie['rating'][0]['ratingLabel']['value'] if movie['rating'] else ''
-    meta = [s['innerText'] for s in movie.get('metadata', [])]
-    print(f'{title} — {rating} — {", ".join(meta)}')
+    title = movie['title'][0]['innerText']
+    year = movie['metadata'][0]['innerText'] if movie['metadata'] else 'N/A'
+    rating = movie['rating'][0]['ratingLabel']['value'] if movie['rating'] else 'N/A'
+    print(f'{title} ({year}) - {rating}')

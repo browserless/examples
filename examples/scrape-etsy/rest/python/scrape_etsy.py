@@ -9,6 +9,8 @@ response = requests.post(
     'https://production-sfo.browserless.io/scrape?token=YOUR_API_TOKEN_HERE',
     json={
         'url': 'https://www.etsy.com/search?q=candles',
+        'bestAttempt': True,
+        'waitForSelector': {'selector': '.v2-listing-card'},
         'elements': [
             {'selector': '.v2-listing-card h3'},
             {'selector': '.v2-listing-card .currency-value'},

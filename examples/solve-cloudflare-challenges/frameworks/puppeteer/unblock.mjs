@@ -15,7 +15,7 @@ const { browserWSEndpoint } = await fetch(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      url: 'https://example-cloudflare-protected.com',
+      url: 'https://www.scrapingcourse.com/cloudflare-challenge',
       browserWSEndpoint: true,
       ttl: 30000,
     }),

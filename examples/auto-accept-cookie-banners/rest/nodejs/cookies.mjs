@@ -9,10 +9,8 @@
 
 import fs from 'fs';
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-
 const response = await fetch(
-  `https://production-sfo.browserless.io/chromium/bql?token=${TOKEN}`,
+  'https://production-sfo.browserless.io/chromium/bql?token=YOUR_API_TOKEN_HERE',
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -21,14 +19,20 @@ const response = await fetch(
         # waitUntil: networkIdle ensures the page is fully settled before the if check runs.
         # if returns null (not an error) when the selector is absent, so this is safe on
         # pages with no banner.
-        goto(url: "https://scraping-sandbox.netlify.app/clarity-health", waitUntil: networkIdle) {
+        goto(url: "https://www.onetrust.com/", waitUntil: networkIdle) {
           status
         }
+
         if(selector: "[id*=accept], [class*=accept], button[id*=cookie]", visible: true) {
           acceptBtn: click(selector: "[id*=accept], [class*=accept], button[id*=cookie]") {
             time
           }
+          # Give the banner a moment to animate out before the screenshot.
+          bannerClosed: waitForTimeout(time: 1000) {
+            time
+          }
         }
+
         screenshot {
           base64
         }

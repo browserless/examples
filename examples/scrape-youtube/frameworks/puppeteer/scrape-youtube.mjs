@@ -1,4 +1,4 @@
-// Scrapes YouTube search results using Puppeteer with stealth mode.
+// Scrapes title, channel, views, likes, and upload date from a YouTube video page using Puppeteer with stealth mode.
 //
 // Install: npm install puppeteer-core
 // Run:     node scrape-youtube.mjs
@@ -6,29 +6,31 @@
 import puppeteer from 'puppeteer-core';
 
 const browser = await puppeteer.connect({
-  browserWSEndpoint:
-    'wss://production-sfo.browserless.io/stealth?token=YOUR_API_TOKEN_HERE',
+  browserWSEndpoint: 'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE',
 });
 
 try {
   const page = await browser.newPage();
-  await page.goto(
-    'https://www.youtube.com/results?search_query=javascript+tutorial',
-    { waitUntil: 'networkidle2' }
-  );
+  await page.goto('https://www.youtube.com/watch?v=dQw4w9WgXcQ', {
+    waitUntil: 'domcontentloaded',
+  });
 
-  await new Promise((r) => setTimeout(r, 2000));
+  // Wait for the view count to confirm the video metadata has rendered.
+  await page.waitForSelector('#view-count[aria-label]');
 
-  const videos = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('ytd-video-renderer')).map((card) => ({
-      title: card.querySelector('#video-title')?.innerText?.trim() ?? '',
-      channel: card.querySelector('[id="channel-name"]')?.innerText?.trim() ?? '',
-      views: card.querySelector('span.inline-metadata-item')?.innerText?.trim() ?? '',
-      url: card.querySelector('a#video-title')?.href ?? '',
-    }))
-  );
+  // Batch all reads into one evaluate() call to avoid multiple round-trips.
+  const data = await page.evaluate(() => ({
+    title: document.querySelector('h1.ytd-watch-metadata yt-formatted-string')?.textContent?.trim() ?? null,
+    channel: document.querySelector('ytd-channel-name yt-formatted-string a')?.textContent?.trim() ?? null,
+    // Views and likes render as animated counters, so read their accessible labels instead.
+    views: document.querySelector('#view-count')?.getAttribute('aria-label')?.trim() ?? null,
+    likes: document.querySelector('#top-level-buttons-computed like-button-view-model button')
+      ?.getAttribute('aria-label') ?? null,
+    uploadDate: document.querySelector('#info-strings yt-formatted-string')?.textContent?.trim() ?? null,
+  }));
 
-  console.log(JSON.stringify(videos, null, 2));
+  console.log(JSON.stringify(data, null, 2));
 } finally {
+  // Always close to release the session even on error.
   await browser.close();
 }

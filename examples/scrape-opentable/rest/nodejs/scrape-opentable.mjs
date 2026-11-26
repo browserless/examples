@@ -3,18 +3,18 @@
 // Run: node scrape-opentable.mjs
 
 const query = `mutation ScrapeOpenTable {
-  goto(url: "https://www.opentable.com/s?term=italian&covers=2", waitUntil: networkIdle) {
+  goto(url: "https://www.opentable.com/s?term=italian&covers=2", waitUntil: domContentLoaded) {
     status
   }
-  waitForSelector(selector: "[data-test=restaurant-card]", timeout: 15000) {
+  waitForSelector(selector: "[data-test=restaurant-card]:has(h6)", timeout: 15000) {
     time
   }
-  restaurants: mapSelector(selector: "[data-test=restaurant-card]") {
-    name: mapSelector(selector: "h2") { innerText }
-    rating: mapSelector(selector: "[data-test=rating-score]") { innerText }
-    cuisine: mapSelector(selector: "[data-test=cuisine]") { innerText }
-    priceRange: mapSelector(selector: "[data-test=price-range]") { innerText }
-    bookingsToday: mapSelector(selector: "[data-test=bookings-today]") { innerText }
+  restaurants: mapSelector(selector: "[data-test=restaurant-card]:has(h6)") {
+    name: mapSelector(selector: "h6") { innerText }
+    summary: mapSelector(selector: "[data-testid=search-list-card-content-container] > div:nth-child(2)") { innerText }
+    cuisine: mapSelector(selector: "[aria-label^=Price] + span") { innerText }
+    priceRange: mapSelector(selector: "[aria-label^=Price]") { innerText }
+    bookingsToday: mapSelector(selector: "[data-testid=icSocialProof] + span") { innerText }
   }
 }`;
 
@@ -23,15 +23,9 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeOpenTable' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 
 const { data } = await response.json();
-const restaurants = data.restaurants.map((r) => ({
-  name: r.name?.[0]?.innerText ?? '',
-  rating: r.rating?.[0]?.innerText ?? '',
-  cuisine: r.cuisine?.[0]?.innerText ?? '',
-  priceRange: r.priceRange?.[0]?.innerText ?? '',
-}));
-console.log(JSON.stringify(restaurants, null, 2));
+console.log(JSON.stringify(data.restaurants, null, 2));

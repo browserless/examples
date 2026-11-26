@@ -1,35 +1,39 @@
-# Runs an end-to-end test against a remote Browserless browser using BQL.
+# Runs an end-to-end test against a remote Browserless browser using the /function API.
 #
 # Install: pip install requests
 # Run:     python e2e_testing.py
 
+import sys
 import requests
 
-query = """
-mutation E2ETest {
-  goto(url: "https://automationexercise.com", waitUntil: networkIdle) {
-    status
-  }
-  title {
-    title
-  }
-  verify: text(selector: "h2") {
-    text
-  }
-}
+code = """
+export default async ({ page }) => {
+  await page.goto('https://scraping-sandbox.netlify.app/products');
+
+  const title = await page.title();
+  const heading = await page.$eval('h1', el => el.textContent.trim());
+  const hasLink = (await page.$('a[href]')) !== null;
+
+  const results = [
+    { test: 'title includes Product Catalog', passed: title.includes('Product Catalog') },
+    { test: 'h1 reads Product Catalog', passed: heading === 'Product Catalog' },
+    { test: 'page has at least one link', passed: hasLink },
+  ];
+
+  return { passed: results.every(r => r.passed), results };
+};
 """
 
 response = requests.post(
-    'https://production-sfo.browserless.io/bql',
-    params={'token': 'YOUR_API_TOKEN_HERE'},
-    json={'query': query, 'variables': {}, 'operationName': 'E2ETest'},
+    'https://production-sfo.browserless.io/function?token=YOUR_API_TOKEN_HERE',
+    headers={'Content-Type': 'application/javascript'},
+    data=code.encode('utf-8'),
 )
 
-data = response.json()['data']
+data = response.json()
+for result in data['results']:
+    icon = '✓' if result['passed'] else '✗'
+    print(f"{icon} {result['test']}")
 
-assert data['goto']['status'] == 200, f"Expected status 200, got {data['goto']['status']}"
-assert 'Automation' in data['title']['title'], f"Title check failed: {data['title']['title']}"
-
-print('All assertions passed.')
-print('Page title:', data['title']['title'])
-print('H2 text:', data['verify']['text'])
+if not data['passed']:
+    sys.exit(1)

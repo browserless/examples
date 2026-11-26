@@ -1,22 +1,16 @@
 # Scrapes Reddit posts from r/programming. Run against /stealth/bql.
-mutation ScrapeReddit {
-  goto(url: "https://www.reddit.com/r/programming/", waitUntil: networkIdle) {
+
+mutation ScrapeRedditPosts {
+  goto(url: "https://www.reddit.com/r/programming/", waitUntil: domContentLoaded) {
     status
   }
-
-  waitForTimeout(time: 2000) {
+  waitForSelector(selector: "shreddit-post", timeout: 15000) {
     time
   }
-
-  posts: mapSelector(selector: "article") {
-    title: mapSelector(selector: "[id*='post-title']") {
-      innerText
-    }
-    score: mapSelector(selector: "[id*='vote-arrows']") {
-      innerText
-    }
-    comments: mapSelector(selector: "a[data-click-id='comments']") {
-      innerText
-    }
+  posts: mapSelector(selector: "shreddit-post") {
+    title: attribute(name: "post-title") { value }
+    score: attribute(name: "score") { value }
+    commentCount: attribute(name: "comment-count") { value }
+    permalink: attribute(name: "permalink") { value }
   }
 }

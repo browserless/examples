@@ -7,19 +7,19 @@ import requests
 
 query = """
 mutation ScrapeAmazon {
-  goto(url: "https://www.amazon.com/s?k=wireless+headphones", waitUntil: networkIdle) {
+  goto(url: "https://www.amazon.com/s?k=wireless+headphones", waitUntil: domContentLoaded) {
     status
   }
-  waitForSelector(selector: "div.s-result-item[data-asin]", timeout: 15000) {
+  waitForSelector(selector: "[data-component-type=s-search-result]", timeout: 15000) {
     time
   }
-  products: mapSelector(selector: "div.s-result-item[data-asin]") {
+  products: mapSelector(selector: "[data-component-type=s-search-result]") {
     asin: attribute(name: "data-asin") { value }
     title: mapSelector(selector: "h2 span") { innerText }
     price: mapSelector(selector: ".a-price .a-offscreen") { innerText }
     rating: mapSelector(selector: ".a-icon-alt") { innerText }
-    reviewCount: mapSelector(selector: ".a-size-base.s-underline-text") { innerText }
-    link: mapSelector(selector: "h2 a") {
+    reviewCount: mapSelector(selector: "[aria-label*=ratings]") { innerText }
+    link: mapSelector(selector: "a:has(h2)") {
       href: attribute(name: "href") { value }
     }
   }
@@ -33,12 +33,12 @@ response = requests.post(
         'proxy': 'residential',
         'proxyCountry': 'us',
     },
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeAmazon'},
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
-for prod in data['products']:
-    title = prod['title'][0]['innerText'] if prod['title'] else ''
-    price = prod['price'][0]['innerText'] if prod['price'] else ''
-    rating = prod['rating'][0]['innerText'] if prod['rating'] else ''
-    print(f'{title} — {price} — {rating}')
+for product in data['products']:
+    title = product['title'][0]['innerText']
+    price = product['price'][0]['innerText'] if product['price'] else 'N/A'
+    rating = product['rating'][0]['innerText'] if product['rating'] else 'N/A'
+    print(f'{title} | {price} | {rating}')

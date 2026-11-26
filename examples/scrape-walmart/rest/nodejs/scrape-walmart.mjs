@@ -3,21 +3,29 @@
 // Run: node scrape-walmart.mjs
 
 const query = `mutation ScrapeWalmart {
-  goto(url: "https://www.walmart.com/search?q=coffee+maker", waitUntil: networkIdle) {
+  goto(url: "https://www.walmart.com/search?q=iphone", waitUntil: domContentLoaded) {
     status
   }
-  waitForTimeout(time: 2000) {
+  waitForTimeout(time: 3000) {
     time
   }
   products: mapSelector(selector: "[data-item-id]") {
-    title: mapSelector(selector: "[data-automation-id='product-title']") {
+    name: mapSelector(selector: "[data-automation-id='product-title']") {
       innerText
     }
-    price: mapSelector(selector: "[itemprop='price']") {
+    price: mapSelector(selector: "[data-testid='unified-global-product-price-a11y-text']") {
       innerText
     }
     rating: mapSelector(selector: "[data-testid='product-ratings']") {
       innerText
+    }
+    reviewCount: mapSelector(selector: "[data-testid='product-reviews']") {
+      innerText
+    }
+    link: mapSelector(selector: "a[href*='/ip/']") {
+      href: attribute(name: "href") {
+        value
+      }
     }
   }
 }`;
@@ -33,8 +41,10 @@ const response = await fetch(
 
 const { data } = await response.json();
 const products = data.products.map((p) => ({
-  title: p.title?.[0]?.innerText ?? '',
+  name: p.name?.[0]?.innerText ?? '',
   price: p.price?.[0]?.innerText ?? '',
   rating: p.rating?.[0]?.innerText ?? '',
+  reviewCount: p.reviewCount?.[0]?.innerText ?? '',
+  link: p.link?.[0]?.href?.value ?? '',
 }));
 console.log(JSON.stringify(products, null, 2));

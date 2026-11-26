@@ -9,6 +9,8 @@ const response = await fetch(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       url: 'https://www.etsy.com/search?q=candles',
+      bestAttempt: true,
+      waitForSelector: { selector: '.v2-listing-card' },
       elements: [
         { selector: '.v2-listing-card h3' },
         { selector: '.v2-listing-card .currency-value' },

@@ -1,4 +1,4 @@
-// Scrapes Realtor.com property listings using BQL with stealth mode and residential proxy.
+// Scrapes Realtor.com property listings using Puppeteer with stealth mode and residential proxy.
 //
 // Install: npm install puppeteer-core
 // Run:     node scrape-realtor.mjs
@@ -13,18 +13,19 @@ const browser = await puppeteer.connect({
 try {
   const page = await browser.newPage();
   await page.goto('https://www.realtor.com/realestateandhomes-search/San-Francisco_CA', {
-    waitUntil: 'networkidle2',
+    waitUntil: 'domcontentloaded',
   });
 
-  await page.waitForSelector('[data-testid=card-content]');
+  await page.waitForSelector('[data-testid="property-card"]');
 
   const properties = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('[data-testid="card-content"]')).map((card) => ({
-      price: card.querySelector('[data-testid="card-price"]')?.innerText?.trim() ?? '',
-      address: card.querySelector('[data-testid="card-address"]')?.innerText?.trim() ?? '',
-      beds: card.querySelector('[data-testid="property-meta-beds"] span')?.innerText?.trim() ?? '',
-      baths: card.querySelector('[data-testid="property-meta-baths"] span')?.innerText?.trim() ?? '',
-      sqft: card.querySelector('[data-testid="property-meta-sqft"] span')?.innerText?.trim() ?? '',
+    Array.from(document.querySelectorAll('[data-testid="property-card"]')).map((card) => ({
+      price: card.querySelector('.fs_700')?.innerText?.trim() ?? '',
+      // The card link's screen-reader text reads "property detail for <address>".
+      address: card.querySelector('a .sr_true')?.innerText?.replace('property detail for ', '').trim() ?? '',
+      beds: card.querySelector('[data-testid="property-meta-beds"] [data-testid="meta-value"]')?.innerText?.trim() ?? '',
+      baths: card.querySelector('[data-testid="property-meta-baths"] [data-testid="meta-value"]')?.innerText?.trim() ?? '',
+      sqft: card.querySelector('[data-testid="property-meta-sqft"] [data-testid="meta-value"]')?.innerText?.trim() ?? '',
     }))
   );
 

@@ -7,7 +7,7 @@ import requests
 
 query = """
 mutation ScrapeLinkedInJobs {
-  goto(url: "https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States", waitUntil: networkIdle) {
+  goto(url: "https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: ".base-card", timeout: 15000) {
@@ -32,12 +32,12 @@ response = requests.post(
         'proxy': 'residential',
         'proxyCountry': 'us',
     },
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeLinkedInJobs'},
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
 for job in data['jobs']:
-    title = job['title'][0]['innerText'] if job['title'] else ''
-    company = job['company'][0]['innerText'] if job['company'] else ''
-    location = job['location'][0]['innerText'] if job['location'] else ''
-    print(f'{title} — {company} — {location}')
+    title = job['title'][0]['innerText']
+    company = job['company'][0]['innerText']
+    location = job['location'][0]['innerText']
+    print(f'{title} at {company} ({location})')

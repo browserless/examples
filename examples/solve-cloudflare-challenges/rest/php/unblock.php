@@ -10,13 +10,13 @@ $token = 'YOUR_API_TOKEN_HERE';
 
 $ch = curl_init("https://production-sfo.browserless.io/unblock?token={$token}&proxy=residential");
 curl_setopt_array($ch, [
-    CURLOPT_POST           => true,
-    CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS     => json_encode([
-        'url'              => 'https://example-cloudflare-protected.com',
-        'content'          => true,
-        'cookies'          => false,
-        'screenshot'       => false,
+    CURLOPT_POST => true,
+    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+    CURLOPT_POSTFIELDS => json_encode([
+        'url' => 'https://www.scrapingcourse.com/cloudflare-challenge',
+        'content' => true,
+        'cookies' => false,
+        'screenshot' => false,
         'browserWSEndpoint' => false,
     ]),
     CURLOPT_RETURNTRANSFER => true,

@@ -1,39 +1,33 @@
-// Retries a Browserless BQL request with exponential backoff on failure.
+// Retries a Browserless /screenshot request with exponential backoff on failure.
 //
 // Run: node retry-backoff.mjs
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-const BQL_URL = `https://production-sfo.browserless.io/bql?token=${TOKEN}`;
-
-const MAX_RETRIES = 5;
-const BASE_DELAY_MS = 1000;
-
-async function fetchWithRetry(url, options, retries = MAX_RETRIES, delay = BASE_DELAY_MS) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
+async function withRetry(fn, { retries = 3, baseDelay = 500 } = {}) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await fetch(url, options);
-      if (response.ok) return response;
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const result = await fn();
+      if (result.status === 429) {
+        if (attempt === retries) throw new Error('Browserless over capacity after retries');
+        const delay = baseDelay * 2 ** attempt;
+        console.warn(`Attempt ${attempt + 1} failed: 429. Retrying in ${delay}ms...`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+      return result;
     } catch (err) {
       if (attempt === retries) throw err;
-      console.warn(`Attempt ${attempt} failed: ${err.message}. Retrying in ${delay}ms...`);
-      await new Promise((r) => setTimeout(r, delay));
-      delay *= 2;
+      const delay = baseDelay * 2 ** attempt;
+      console.warn(`Attempt ${attempt + 1} failed: ${err.message}. Retrying in ${delay}ms...`);
+      await new Promise(r => setTimeout(r, delay));
     }
   }
 }
 
-const response = await fetchWithRetry(BQL_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    query: `mutation {
-      goto(url: "https://scraping-sandbox.netlify.app/dashboard", waitUntil: networkIdle) { status }
-      title { title }
-    }`,
-    variables: {},
-  }),
-});
-
-const { data } = await response.json();
-console.log('Title:', data.title.title);
+const response = await withRetry(() =>
+  fetch('https://production-sfo.browserless.io/screenshot?token=YOUR_API_TOKEN_HERE', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url: 'https://scraping-sandbox.netlify.app/dashboard' }),
+  })
+);
+const buffer = await response.arrayBuffer();

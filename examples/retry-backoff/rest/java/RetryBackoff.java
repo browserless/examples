@@ -1,46 +1,40 @@
-// Retries a Browserless BQL request with exponential backoff on failure.
+// Retries a Browserless /screenshot request with exponential backoff on failure.
 //
 // Run: javac RetryBackoff.java && java RetryBackoff
 
 import java.net.URI;
 import java.net.http.*;
-import java.time.Duration;
 
 public class RetryBackoff {
-    static final int MAX_RETRIES = 5;
-    static final long BASE_DELAY_MS = 1000;
-
     public static void main(String[] args) throws Exception {
         String token = "YOUR_API_TOKEN_HERE";
-        String endpoint = "https://production-sfo.browserless.io/bql?token=" + token;
-        String payload = "{\"query\": \"mutation { goto(url: \\\"https://scraping-sandbox.netlify.app/dashboard\\\", waitUntil: networkIdle) { status } title { title } }\", \"variables\": {}}";
+        String endpoint = "https://production-sfo.browserless.io/screenshot?token=" + token;
+
+        String body = "{\"url\": \"https://scraping-sandbox.netlify.app/dashboard\"}";
 
         HttpClient client = HttpClient.newHttpClient();
-        long delay = BASE_DELAY_MS;
+        int retries = 3;
+        long baseDelay = 500;
 
-        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-            try {
-                HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(endpoint))
-                    .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(30))
-                    .POST(HttpRequest.BodyPublishers.ofString(payload))
-                    .build();
+        HttpResponse<byte[]> response = null;
+        for (int attempt = 0; attempt <= retries; attempt++) {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
 
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-                if (response.statusCode() == 200) {
-                    System.out.println("Success on attempt " + attempt + ":");
-                    System.out.println(response.body());
-                    return;
-                }
-                throw new RuntimeException("HTTP " + response.statusCode());
-            } catch (Exception e) {
-                if (attempt == MAX_RETRIES) throw e;
-                System.out.println("Attempt " + attempt + " failed: " + e.getMessage() + ". Retrying in " + delay + "ms...");
-                Thread.sleep(delay);
-                delay *= 2;
+            if (response.statusCode() == 429) {
+                if (attempt == retries) throw new RuntimeException("Browserless over capacity after retries");
+                Thread.sleep(baseDelay * (1L << attempt));
+                continue;
             }
+            break;
         }
+
+        System.out.println("Status: " + response.statusCode());
+        System.out.println("Body length: " + response.body().length + " bytes");
     }
 }

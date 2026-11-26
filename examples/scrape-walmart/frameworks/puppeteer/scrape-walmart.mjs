@@ -12,17 +12,18 @@ const browser = await puppeteer.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://www.walmart.com/search?q=coffee+maker', {
-    waitUntil: 'networkidle2',
+  await page.goto('https://www.walmart.com/search?q=iphone', {
+    waitUntil: 'domcontentloaded',
   });
-
-  await new Promise((r) => setTimeout(r, 2000));
+  await page.waitForSelector('[data-item-id]');
 
   const products = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-item-id]')).map((card) => ({
-      title: card.querySelector('[data-automation-id="product-title"]')?.innerText?.trim() ?? '',
-      price: card.querySelector('[itemprop="price"]')?.innerText?.trim() ?? '',
+      name: card.querySelector('[data-automation-id="product-title"]')?.innerText?.trim() ?? '',
+      price: card.querySelector('[data-testid="unified-global-product-price-a11y-text"]')?.innerText?.trim() ?? '',
       rating: card.querySelector('[data-testid="product-ratings"]')?.innerText?.trim() ?? '',
+      reviewCount: card.querySelector('[data-testid="product-reviews"]')?.innerText?.trim() ?? '',
+      link: card.querySelector('a[href*="/ip/"]')?.href ?? '',
     }))
   );
 

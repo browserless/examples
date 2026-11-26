@@ -12,25 +12,16 @@ string endpoint = $"https://production-sfo.browserless.io/stealth/bql?token={tok
 var payload = new
 {
     query = @"mutation ScrapeIndeedJobs {
-  goto(url: ""https://www.indeed.com/jobs?q=data+scientist&l=Remote"", waitUntil: networkIdle) {
-    status
-  }
-  waitForSelector(selector: "".job_seen_beacon"", timeout: 15000) {
-    time
-  }
-  jobs: mapSelector(selector: "".job_seen_beacon"") {
-    title: mapSelector(selector: "".jobTitle a span"") { innerText }
-    company: mapSelector(selector: "".companyName"") { innerText }
-    location: mapSelector(selector: "".companyLocation"") { innerText }
-    salary: mapSelector(selector: "".salary-snippet-container"") { innerText }
-    snippet: mapSelector(selector: "".job-snippet"") { innerText }
-    link: mapSelector(selector: "".jobTitle a"") {
-      href: attribute(name: ""href"") { value }
-    }
-  }
-}",
+      goto(url: ""https://www.indeed.com/jobs?q=data+scientist&l=Remote"", waitUntil: domContentLoaded) { status }
+      waitForSelector(selector: "".job_seen_beacon"", timeout: 15000) { time }
+      jobs: mapSelector(selector: "".job_seen_beacon"") {
+        title: mapSelector(selector: "".jobTitle a span"") { innerText }
+        company: mapSelector(selector: ""[data-testid=company-name]"") { innerText }
+        location: mapSelector(selector: ""[data-testid=text-location]"") { innerText }
+        salary: mapSelector(selector: "".salary-snippet-container"") { innerText }
+      }
+    }",
     variables = new { },
-    operationName = "ScrapeIndeedJobs",
 };
 
 using (HttpClient httpClient = new HttpClient())

@@ -1,20 +1,28 @@
-// Searches Google and extracts result headings using the Browserless /scrape endpoint.
+// Searches Google and extracts result headings with a BQL mutation on the /stealth/bql endpoint.
 // Uses Node.js 18+ native fetch — no extra packages needed.
-// Note: Google may block or CAPTCHA this request — use BQL for more reliable results.
+// Stealth mode helps, but Google can still answer with a block or CAPTCHA page.
 //
 // Run: node search.mjs
 
+const query = `
+  mutation GoogleSearch {
+    goto(url: "https://www.google.com/search?q=Browserless+headless+browser") {
+      status
+    }
+    results: mapSelector(selector: "h3", wait: true) {
+      innerText
+    }
+  }
+`;
+
 const response = await fetch(
-  'https://production-sfo.browserless.io/scrape?token=YOUR_API_TOKEN_HERE',
+  'https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE',
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      url: 'https://www.google.com/search?q=Browserless+headless+browser',
-      elements: [{ selector: 'h3' }],
-    }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
-const { data } = await response.json();
-const titles = data[0].results.map((r) => r.text);
-console.log(titles);
+
+const result = await response.json();
+console.log(result.data.results);

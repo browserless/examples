@@ -2,21 +2,31 @@
 # Install: pip install pytest-playwright
 # Run:     pytest
 
-def test_homepage_loads(page):
-    page.goto("https://automationexercise.com", wait_until="networkidle")
-    assert "Automation" in page.title()
+import re
+from playwright.sync_api import expect
 
+def test_page_has_correct_title(page):
+    page.goto("https://scraping-sandbox.netlify.app/products")
+    expect(page).to_have_title(re.compile(r"Product Catalog"))
 
-def test_products_page(page):
-    page.goto("https://automationexercise.com/products", wait_until="networkidle")
-    page.wait_for_selector(".features_items")
-    products = page.query_selector_all(".product-image-wrapper")
-    assert len(products) > 0, "No products found"
+def test_heading_is_visible(page):
+    page.goto("https://scraping-sandbox.netlify.app/products")
+    heading = page.locator("h1")
+    expect(heading).to_be_visible()
+    expect(heading).to_have_text("Product Catalog")
 
+def test_page_has_link(page):
+    page.goto("https://scraping-sandbox.netlify.app/products")
+    expect(page.locator("a[href]").first).to_be_visible()
 
-def test_add_to_cart(page):
-    page.goto("https://automationexercise.com/products", wait_until="networkidle")
-    page.hover(".product-image-wrapper:first-child")
-    page.click(".product-image-wrapper:first-child .add-to-cart")
-    page.wait_for_selector("#cartModal")
-    assert page.is_visible("#cartModal"), "Cart modal not shown"
+def test_page_loads_without_analytics(page):
+    blocked = []
+
+    def handle_route(route):
+        blocked.append(route.request.url)
+        route.abort()
+
+    page.route("**/analytics/**", handle_route)
+    page.goto("https://scraping-sandbox.netlify.app/products")
+    expect(page).to_have_title(re.compile(r"Product Catalog"))
+    print(f"Blocked {len(blocked)} analytics request(s)")

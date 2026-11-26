@@ -1,4 +1,4 @@
-# Scrapes Zillow property listings using BQL with stealth mode and residential proxy.
+# Scrapes real estate agent names and profile URLs from a Zillow agent directory using BQL with stealth mode and residential proxy.
 #
 # Install: pip install requests
 # Run:     python scrape_zillow.py
@@ -7,21 +7,21 @@ import requests
 
 query = """
 mutation ScrapeZillow {
-  goto(url: "https://www.zillow.com/new-york-ny/", waitUntil: networkIdle) {
+  goto(
+    url: "https://www.zillow.com/professionals/real-estate-agent-reviews/new-york-ny/"
+    waitUntil: networkIdle
+  ) {
     status
   }
   waitForTimeout(time: 3000) {
     time
   }
-  listings: mapSelector(selector: "[data-test='property-card']") {
-    address: mapSelector(selector: "[data-test='property-card-addr']") {
+  agents: mapSelector(selector: "a[href*='/profile/']") {
+    name: mapSelector(selector: "h2") {
       innerText
     }
-    price: mapSelector(selector: "[data-test='property-card-price']") {
-      innerText
-    }
-    details: mapSelector(selector: ".StyledPropertyCardHomeDetails") {
-      innerText
+    profileUrl: attribute(name: "href") {
+      value
     }
   }
 }
@@ -32,14 +32,16 @@ response = requests.post(
     params={
         'token': 'YOUR_API_TOKEN_HERE',
         'proxy': 'residential',
+        'proxySticky': 'true',
         'proxyCountry': 'us',
+        'humanlike': 'true',
+        'blockAds': 'true',
     },
     json={'query': query, 'variables': {}, 'operationName': 'ScrapeZillow'},
 )
 
 data = response.json()['data']
-for listing in data['listings']:
-    address = listing['address'][0]['innerText'] if listing['address'] else ''
-    price = listing['price'][0]['innerText'] if listing['price'] else ''
-    details = listing['details'][0]['innerText'] if listing['details'] else ''
-    print(f'{address} — {price}\n  {details}\n')
+for agent in data['agents']:
+    name = agent['name'][0]['innerText'] if agent['name'] else ''
+    profile_url = agent['profileUrl']['value'] if agent['profileUrl'] else ''
+    print(f'{name}: {profile_url}')

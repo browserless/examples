@@ -12,24 +12,19 @@ string endpoint = $"https://production-sfo.browserless.io/stealth/bql?token={tok
 var payload = new
 {
     query = @"mutation ScrapeYelp {
-  goto(url: ""https://www.yelp.com/search?find_desc=pizza&find_loc=New+York%2C+NY"", waitUntil: networkIdle) {
-    status
-  }
-  waitForSelector(selector: ""[data-testid=serp-ia-card]"", timeout: 15000) {
-    time
-  }
-  businesses: mapSelector(selector: ""[data-testid=serp-ia-card]"") {
-    name: mapSelector(selector: ""a[class*=businessName] span"") { innerText }
-    rating: mapSelector(selector: ""[aria-label*=star]"") {
-      ratingLabel: attribute(name: ""aria-label"") { value }
-    }
-    reviewCount: mapSelector(selector: ""span[class*=reviewCount]"") { innerText }
-    categories: mapSelector(selector: ""a[class*=categoryLink]"") { innerText }
-    priceRange: mapSelector(selector: ""span[class*=priceRange]"") { innerText }
-  }
-}",
+      goto(url: ""https://www.yelp.com/search?find_desc=pizza&find_loc=New+York%2C+NY"", waitUntil: domContentLoaded) { status }
+      waitForSelector(selector: ""[data-testid=serp-ia-card]"", timeout: 15000) { time }
+      businesses: mapSelector(selector: ""[data-testid=serp-ia-card]"") {
+        name: mapSelector(selector: ""[class*=businessName] a"") { innerText }
+        rating: mapSelector(selector: ""[aria-label*=star]"") {
+          ratingLabel: attribute(name: ""aria-label"") { value }
+        }
+        reviewCount: mapSelector(selector: ""[data-traffic-crawl-id=SearchResultBizRating] span:last-child"") { innerText }
+        categories: mapSelector(selector: ""[data-testid=services-actions-component] a[href*=find_desc]"") { innerText }
+        priceRange: mapSelector(selector: ""[class*=icon--16-marker] + span + span:not([data-font-weight])"") { innerText }
+      }
+    }",
     variables = new { },
-    operationName = "ScrapeYelp",
 };
 
 using (HttpClient httpClient = new HttpClient())

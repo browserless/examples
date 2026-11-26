@@ -1,14 +1,21 @@
 # End-to-end test using BQL to verify page behavior.
-mutation E2ETest {
-  goto(url: "https://automationexercise.com", waitUntil: networkIdle) {
+
+mutation E2ECheck {
+  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: domContentLoaded) {
     status
   }
 
-  title {
-    title
+  title: mapSelector(selector: "title") {
+    innerText
   }
 
-  verify: text(selector: "h2") {
-    text
+  heading: mapSelector(selector: "h1") {
+    innerText
+  }
+
+  links: mapSelector(selector: "a[href]") {
+    href: attribute(name: "href") {
+      value
+    }
   }
 }

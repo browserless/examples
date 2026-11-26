@@ -1,4 +1,5 @@
 # Searches Etsy for candles and extracts product titles, prices, and links.
+
 mutation ScrapeEtsy {
   goto(url: "https://www.etsy.com", waitUntil: domContentLoaded) {
     status
@@ -26,7 +27,7 @@ mutation ScrapeEtsy {
     price: mapSelector(selector: ".currency-value", wait: true) {
       innerText
     }
-    link: mapSelector(selector: "a.listing-link") {
+    link: mapSelector(selector: "a[data-listing-id]") {
       href: attribute(name: "href") {
         value
       }

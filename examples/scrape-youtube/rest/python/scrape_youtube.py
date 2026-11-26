@@ -1,4 +1,4 @@
-# Scrapes YouTube search results using BQL with stealth mode.
+# Scrapes title, channel, views, likes, and upload date from a YouTube video page using BQL with stealth mode.
 #
 # Install: pip install requests
 # Run:     python scrape_youtube.py

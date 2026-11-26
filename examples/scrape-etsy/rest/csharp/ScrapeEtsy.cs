@@ -12,6 +12,8 @@ string endpoint = $"https://production-sfo.browserless.io/scrape?token={token}";
 var payload = new
 {
     url = "https://www.etsy.com/search?q=candles",
+    bestAttempt = true,
+    waitForSelector = new { selector = ".v2-listing-card" },
     elements = new[]
     {
         new { selector = ".v2-listing-card h3" },

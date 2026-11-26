@@ -26,7 +26,7 @@ mutation HealthcarePortal {
     time
   }
   medications: mapSelector(selector: "#medicationlist table tbody tr") {
-    medication: mapSelector(selector: "td:nth-child(1)") { innerText }
+    medication: mapSelector(selector: "td:nth-child(1) strong") { innerText }
     dosage: mapSelector(selector: "td:nth-child(2)") { innerText }
     frequency: mapSelector(selector: "td:nth-child(3)") { innerText }
     prescriber: mapSelector(selector: "td:nth-child(4)") { innerText }
@@ -38,14 +38,14 @@ mutation HealthcarePortal {
 response = requests.post(
     'https://production-sfo.browserless.io/chromium/bql',
     params={'token': 'YOUR_API_TOKEN_HERE'},
-    json={'query': query, 'variables': {}, 'operationName': 'HealthcarePortal'},
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
 for med in data['medications']:
-    name = med['medication'][0]['innerText'] if med['medication'] else ''
-    dosage = med['dosage'][0]['innerText'] if med['dosage'] else ''
-    frequency = med['frequency'][0]['innerText'] if med['frequency'] else ''
-    prescriber = med['prescriber'][0]['innerText'] if med['prescriber'] else ''
-    refills = med['refills'][0]['innerText'] if med['refills'] else ''
+    name = med['medication'][0]['innerText']
+    dosage = med['dosage'][0]['innerText']
+    frequency = med['frequency'][0]['innerText']
+    prescriber = med['prescriber'][0]['innerText']
+    refills = med['refills'][0]['innerText']
     print(f'{name} | {dosage} | {frequency} | {prescriber} | {refills}')

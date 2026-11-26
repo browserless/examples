@@ -2,14 +2,15 @@
 //
 // Run: node scrape-booking.mjs
 
-const query = `mutation ScrapeBooking {
-  goto(
-    url: "https://www.booking.com/searchresults.html?ss=New+York&checkin=2025-09-01&checkout=2025-09-07&group_adults=2"
-    waitUntil: networkIdle
-  ) {
+// Booking.com only shows prices for future stays, so search 30 days from today.
+const day = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+const url = `https://www.booking.com/searchresults.html?ss=New+York&checkin=${day(30)}&checkout=${day(31)}&group_adults=2`;
+
+const query = `mutation ScrapeBooking($url: String!) {
+  goto(url: $url, waitUntil: domContentLoaded) {
     status
   }
-  waitForTimeout(time: 3000) {
+  waitForSelector(selector: "[data-testid='property-card']", timeout: 30000) {
     time
   }
   hotels: mapSelector(selector: "[data-testid='property-card']") {
@@ -19,7 +20,10 @@ const query = `mutation ScrapeBooking {
     price: mapSelector(selector: "[data-testid='price-and-discounted-price']") {
       innerText
     }
-    rating: mapSelector(selector: "[data-testid='review-score']") {
+    rating: mapSelector(selector: "[data-testid='review-score'] [aria-hidden='true']") {
+      innerText
+    }
+    location: mapSelector(selector: "[data-testid='address-link']") {
       innerText
     }
   }
@@ -30,14 +34,15 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeBooking' }),
+    body: JSON.stringify({ query, variables: { url } }),
   }
 );
 
 const { data } = await response.json();
-const hotels = data.hotels.map((h) => ({
-  name: h.name?.[0]?.innerText ?? '',
-  price: h.price?.[0]?.innerText ?? '',
-  rating: h.rating?.[0]?.innerText ?? '',
+const hotels = data.hotels.map((hotel) => ({
+  name: hotel.name?.[0]?.innerText ?? '',
+  price: hotel.price?.[0]?.innerText ?? '',
+  rating: hotel.rating?.[0]?.innerText ?? '',
+  location: hotel.location?.[0]?.innerText ?? '',
 }));
 console.log(JSON.stringify(hotels, null, 2));

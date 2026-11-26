@@ -14,14 +14,20 @@
 # You can also paste this directly into the BQL IDE at https://account.browserless.io/bql
 
 mutation AcceptCookies {
-  goto(url: "https://scraping-sandbox.netlify.app/clarity-health", waitUntil: networkIdle) {
+  goto(url: "https://www.onetrust.com/", waitUntil: networkIdle) {
     status
   }
+
   if(selector: "[id*=accept], [class*=accept], button[id*=cookie]", visible: true) {
     acceptBtn: click(selector: "[id*=accept], [class*=accept], button[id*=cookie]") {
       time
     }
+    # Give the banner a moment to animate out before the screenshot.
+    bannerClosed: waitForTimeout(time: 1000) {
+      time
+    }
   }
+
   screenshot {
     base64
   }

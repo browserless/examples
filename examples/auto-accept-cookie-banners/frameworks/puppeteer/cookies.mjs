@@ -8,15 +8,13 @@
 
 import puppeteer from 'puppeteer-core';
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-
 const browser = await puppeteer.connect({
-  browserWSEndpoint: `wss://production-sfo.browserless.io?token=${TOKEN}`,
+  browserWSEndpoint: 'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE',
 });
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://scraping-sandbox.netlify.app/clarity-health', { waitUntil: 'networkidle2' });
+  await page.goto('https://www.onetrust.com/', { waitUntil: 'networkidle2' });
 
   // Try common accept-button selectors — banners rarely share a single standard attribute.
   const cookieSelectors = [
@@ -31,7 +29,8 @@ try {
     try {
       await page.click(selector);
       console.log(`Dismissed banner with selector: ${selector}`);
-      await new Promise(r => setTimeout(r, 500));
+      // Give the banner a moment to animate out before the screenshot.
+      await new Promise(r => setTimeout(r, 1000));
       break;
     } catch {
       // selector not found on this page — try the next one.

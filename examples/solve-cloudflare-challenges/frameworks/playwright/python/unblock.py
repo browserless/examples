@@ -13,12 +13,11 @@ TOKEN = 'YOUR_API_TOKEN_HERE'
 res = requests.post(
     f'https://production-sfo.browserless.io/unblock?token={TOKEN}&proxy=residential',
     json={
-        'url': 'https://example-cloudflare-protected.com',
+        'url': 'https://www.scrapingcourse.com/cloudflare-challenge',
         'browserWSEndpoint': True,
         'ttl': 30000,
     },
 )
-
 # The /unblock response returns a raw WebSocket URL — append the token before connecting.
 ws_endpoint = res.json()['browserWSEndpoint']
 

@@ -1,43 +1,33 @@
-# Runs multiple DOM queries in a single BQL request — title, h1, meta description, and links.
-# BQL executes all fields in one browser session, avoiding multiple round-trips.
+# Runs multiple DOM queries in a single /function request — title, h1, meta description, and links.
+# The function runs every query in one browser session, avoiding multiple round-trips.
 #
 # Install: pip install requests
 # Run:     python batch_dom_queries.py
 
 import requests
 
-query = """
-mutation BatchDOMQueries {
-  goto(url: "https://scraping-sandbox.netlify.app/products", waitUntil: networkIdle) {
-    status
-  }
-  title {
-    title
-  }
-  heading: text(selector: "h1") {
-    text
-  }
-  description: attribute(selector: "meta[name='description']", name: "content") {
-    value
-  }
-  links: mapSelector(selector: "a") {
-    text: innerText
-    href: attribute(name: "href") {
-      value
-    }
-  }
-}
+code = """
+export default async ({ page }) => {
+  await page.goto('https://scraping-sandbox.netlify.app/products');
+
+  const data = await page.evaluate(() => ({
+    title: document.title,
+    heading: document.querySelector('h1')?.textContent?.trim() ?? null,
+    links: Array.from(document.querySelectorAll('a[href]')).map(a => ({
+      text: a.textContent.trim(),
+      href: a.href,
+    })),
+    productCount: document.querySelectorAll('.product-title').length,
+  }));
+
+  return data;
+};
 """
 
 response = requests.post(
-    'https://production-sfo.browserless.io/bql',
-    params={'token': 'YOUR_API_TOKEN_HERE'},
-    json={'query': query, 'variables': {}, 'operationName': 'BatchDOMQueries'},
+    'https://production-sfo.browserless.io/function?token=YOUR_API_TOKEN_HERE',
+    headers={'Content-Type': 'application/javascript'},
+    data=code.encode('utf-8'),
 )
 
-data = response.json()['data']
-print('Title:', data['title']['title'])
-print('H1:', data['heading']['text'])
-print('Description:', data['description']['value'])
-for link in data['links']:
-    print(f"  {link['text']} -> {link['href']['value'] if link['href'] else ''}")
+print(response.json())

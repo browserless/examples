@@ -5,39 +5,37 @@
 
 import { chromium } from 'playwright-core';
 
-const browser = await chromium.connectOverCDP(
-  'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE'
+const browser = await chromium.connect(
+  'wss://production-sfo.browserless.io/chromium/playwright?token=YOUR_API_TOKEN_HERE'
 );
 
 try {
-  const context = browser.contexts()[0];
-  const page = await context.newPage();
+  const page = await browser.newPage();
 
   await page.goto('https://scraping-sandbox.netlify.app/harvest-direct/vendor-portal', {
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
   });
 
   await page.waitForSelector('form');
   await page.fill('input[name="email"]', 'demo@example.com');
   await page.fill('input[name="password"]', 'helloworld');
   await page.click('button[type="submit"]');
-  await page.waitForLoadState('networkidle');
 
+  // The portal renders the orders table client-side after login.
+  await page.waitForSelector('table tbody tr td a');
   const orderLinks = await page.$$eval('table tbody tr td a', (links) =>
     links.map((a) => a.href)
   );
 
   for (const link of orderLinks) {
-    await page.goto(link, { waitUntil: 'networkidle' });
-    const downloadBtn = await page.$('a[download]');
-    if (downloadBtn) {
-      const [download] = await Promise.all([
-        page.waitForEvent('download'),
-        downloadBtn.click(),
-      ]);
-      const path = await download.path();
-      console.log(`Downloaded: ${download.suggestedFilename()} -> ${path}`);
-    }
+    await page.goto(link, { waitUntil: 'domcontentloaded' });
+    // Register before clicking so the download can't be missed.
+    const downloadPromise = page.waitForEvent('download');
+    await page.click('a[download]');
+    const download = await downloadPromise;
+    // Saves on the machine running this script, not the remote browser.
+    await download.saveAs(download.suggestedFilename());
+    console.log(`saved: ${download.suggestedFilename()}`);
   }
 
   console.log(`Downloaded invoices from ${orderLinks.length} orders`);

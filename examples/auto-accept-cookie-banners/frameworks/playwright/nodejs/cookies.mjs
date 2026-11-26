@@ -8,10 +8,8 @@
 
 import { chromium } from 'playwright-core';
 
-const TOKEN = 'YOUR_API_TOKEN_HERE';
-
 const browser = await chromium.connectOverCDP(
-  `wss://production-sfo.browserless.io?token=${TOKEN}`
+  'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE'
 );
 
 try {
@@ -19,9 +17,8 @@ try {
   // doesn't inherit proxy, profile, or launch settings.
   const context = browser.contexts()[0];
   const page = await context.newPage();
-  await page.goto('https://scraping-sandbox.netlify.app/clarity-health', { waitUntil: 'networkidle' });
+  await page.goto('https://www.onetrust.com/', { waitUntil: 'load' });
 
-  // Try common accept-button selectors — banners rarely share a single standard attribute.
   const cookieSelectors = [
     '[id*="accept"]',
     '[class*="accept"]',
@@ -30,12 +27,21 @@ try {
     '.cc-accept',
   ];
 
+  // Consent banners usually load after the page itself. Wait up to 10 seconds
+  // for one to appear, and carry on if none does.
+  await page
+    .locator(cookieSelectors.map((selector) => `${selector}:visible`).join(', '))
+    .first()
+    .waitFor({ timeout: 10_000 })
+    .catch(() => {});
+
   for (const selector of cookieSelectors) {
     const el = page.locator(selector).first();
     if (await el.isVisible()) {
       await el.click();
       console.log(`Dismissed banner with selector: ${selector}`);
-      await new Promise(r => setTimeout(r, 500));
+      // Give the banner a moment to animate out before the screenshot.
+      await new Promise(r => setTimeout(r, 1000));
       break;
     }
   }

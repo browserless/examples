@@ -6,13 +6,11 @@
 # The response contains the fully unblocked page HTML.
 # Set "screenshot": true or "cookies": true to include those in the response as well.
 
-TOKEN="YOUR_API_TOKEN_HERE"
-
 curl -X POST \
-  "https://production-sfo.browserless.io/unblock?token=${TOKEN}&proxy=residential" \
+  "https://production-sfo.browserless.io/unblock?token=YOUR_API_TOKEN_HERE&proxy=residential" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://example-cloudflare-protected.com",
+    "url": "https://www.scrapingcourse.com/cloudflare-challenge",
     "content": true,
     "cookies": false,
     "screenshot": false,

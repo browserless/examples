@@ -3,14 +3,13 @@
 
 import { defineConfig } from '@playwright/test';
 
-const TOKEN = process.env.BROWSERLESS_TOKEN ?? 'YOUR_API_TOKEN_HERE';
-
 export default defineConfig({
-  testDir: './tests',
-  timeout: 60000,
+  workers: 4,
+  retries: 1,
   use: {
+    trace: 'on-first-retry',
     connectOptions: {
-      wsEndpoint: `wss://production-sfo.browserless.io/chromium/playwright?token=${TOKEN}`,
+      wsEndpoint: `wss://production-sfo.browserless.io/chromium/playwright?token=${process.env.BROWSERLESS_TOKEN}`,
     },
   },
 });

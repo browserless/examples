@@ -3,7 +3,7 @@
 # BQL IDE:  https://account.browserless.io/bql
 
 mutation ScrapeLinkedInJobs {
-  goto(url: "https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States", waitUntil: networkIdle) {
+  goto(url: "https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: ".base-card", timeout: 15000) {

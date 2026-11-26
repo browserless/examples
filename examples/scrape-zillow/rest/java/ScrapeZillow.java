@@ -1,4 +1,4 @@
-// Scrapes Zillow property listings using BQL with stealth mode and residential proxy.
+// Scrapes real estate agent names and profile URLs from a Zillow agent directory using BQL with stealth mode and residential proxy.
 //
 // Run: javac ScrapeZillow.java && java ScrapeZillow
 

@@ -8,40 +8,36 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "io"
+    "net/http"
 )
 
 type UnblockResponse struct {
-	Content string `json:"content"`
+    Content string `json:"content"`
 }
 
 func main() {
-	token := "YOUR_API_TOKEN_HERE"
+    token := "YOUR_API_TOKEN_HERE"
+    body := `{"url":"https://www.scrapingcourse.com/cloudflare-challenge","content":true,"cookies":false,"screenshot":false,"browserWSEndpoint":false}`
 
-	body := `{"url":"https://example-cloudflare-protected.com","content":true,"cookies":false,"screenshot":false,"browserWSEndpoint":false}`
-	req, _ := http.NewRequest("POST",
-		"https://production-sfo.browserless.io/unblock?token="+token+"&proxy=residential",
-		bytes.NewBufferString(body),
-	)
-	req.Header.Set("Content-Type", "application/json")
+    req, _ := http.NewRequest("POST",
+        "https://production-sfo.browserless.io/unblock?token="+token+"&proxy=residential",
+        bytes.NewBufferString(body),
+    )
+    req.Header.Set("Content-Type", "application/json")
 
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil { panic(err) }
+    defer resp.Body.Close()
 
-	data, _ := io.ReadAll(resp.Body)
-	var result UnblockResponse
-	json.Unmarshal(data, &result)
+    data, _ := io.ReadAll(resp.Body)
+    var result UnblockResponse
+    json.Unmarshal(data, &result)
 
-	end := len(result.Content)
-	if end > 500 {
-		end = 500
-	}
-	fmt.Println(result.Content[:end])
+    end := len(result.Content)
+    if end > 500 { end = 500 }
+    fmt.Println(result.Content[:end])
 }

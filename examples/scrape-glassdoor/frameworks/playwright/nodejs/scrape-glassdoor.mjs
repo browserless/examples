@@ -14,13 +14,16 @@ try {
   const page = await context.newPage();
   await page.goto(
     'https://www.glassdoor.com/Job/new-york-software-engineer-jobs-SRCH_IL.0,8_IC1132348_KO9,26.htm',
-    { waitUntil: 'networkidle' }
+    { waitUntil: 'domcontentloaded' }
   );
+
+  // Wait for the job cards to render before reading them.
+  await page.waitForSelector('[data-test="jobListing"]');
 
   const jobs = await page.evaluate(() =>
     Array.from(document.querySelectorAll('[data-test="jobListing"]')).map((card) => ({
       title: card.querySelector('a[data-test="job-title"]')?.innerText?.trim() ?? '',
-      company: card.querySelector('[data-test="employer-name"]')?.innerText?.trim() ?? '',
+      company: card.querySelector('[id^="job-employer-"] span[class*="EmployerName"]')?.innerText?.trim() ?? '',
       location: card.querySelector('[data-test="emp-location"]')?.innerText?.trim() ?? '',
       salary: card.querySelector('[data-test="detailSalary"]')?.innerText?.trim() ?? '',
     }))

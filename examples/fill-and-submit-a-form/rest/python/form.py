@@ -1,39 +1,47 @@
-# Fills and submits a form using BrowserQL — navigates, types, selects, solves a CAPTCHA,
+# Fills and submits a form using BrowserQL — navigates, types, picks options,
 # and clicks submit in a single request.
 #
 # Install: pip install requests
 # Run:     python form.py
 
+import json
 import requests
 
-endpoint = 'https://production-sfo.browserless.io/chromium/bql'
-params = {'token': 'YOUR_API_TOKEN_HERE'}
-headers = {'Content-Type': 'application/json'}
-payload = {
-    'query': """mutation FormExample {
-  goto(url: "https://www.browserless.io/practice-form") {
+query = """
+mutation FormExample {
+  goto(url: "https://httpbin.org/forms/post", waitUntil: domContentLoaded) {
     status
   }
-  typeEmail: type(text: "user@example.com", selector: "#Email") {
+  typeName: type(selector: "input[name=custname]", text: "Jane Doe") {
     time
   }
-  typeMessage: type(selector: "#Message", text: "Hello from Browserless!") {
+  typeEmail: type(selector: "input[name=custemail]", text: "jane@example.com") {
     time
   }
-  subject: select(selector: "select#Subject", value: "Support") {
-    selector
-  }
-  solve {
-    time
-    solved
-  }
-  submitForm: click(selector: "button[type='submit']") {
+  chooseSize: click(selector: "input[value=medium]") {
     time
   }
-}""",
-    'variables': {},
-    'operationName': 'FormExample',
+  addTopping: checkbox(selector: "input[value=cheese]", checked: true) {
+    time
+  }
+  typeComments: type(selector: "textarea[name=comments]", text: "Hello from Browserless!") {
+    time
+  }
+  submitForm: click(selector: "form button") {
+    time
+  }
+  response: text(selector: "body") {
+    text
+  }
 }
+"""
 
-response = requests.post(endpoint, params=params, headers=headers, json=payload)
-print(response.json())
+response = requests.post(
+    'https://production-sfo.browserless.io/chromium/bql',
+    params={'token': 'YOUR_API_TOKEN_HERE'},
+    json={'query': query, 'variables': {}, 'operationName': 'FormExample'},
+)
+
+data = response.json()['data']
+# httpbin echoes the submission as JSON; `form` holds the posted fields.
+print(json.dumps(json.loads(data['response']['text'])['form'], indent=2))

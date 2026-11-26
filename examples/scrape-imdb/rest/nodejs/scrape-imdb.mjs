@@ -3,7 +3,7 @@
 // Run: node scrape-imdb.mjs
 
 const query = `mutation ScrapeIMDb {
-  goto(url: "https://www.imdb.com/chart/top/", waitUntil: networkIdle) {
+  goto(url: "https://www.imdb.com/chart/top/", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: ".ipc-metadata-list-summary-item", timeout: 15000) {
@@ -11,7 +11,7 @@ const query = `mutation ScrapeIMDb {
   }
   movies: mapSelector(selector: ".ipc-metadata-list-summary-item") {
     title: mapSelector(selector: ".ipc-title__text") { innerText }
-    metadata: mapSelector(selector: ".cli-title-metadata span") { innerText }
+    metadata: mapSelector(selector: ".cli-title-metadata li") { innerText }
     rating: mapSelector(selector: ".ipc-rating-star--imdb") {
       ratingLabel: attribute(name: "aria-label") { value }
     }
@@ -23,14 +23,9 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeIMDb' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 
 const { data } = await response.json();
-const movies = data.movies.map((m) => ({
-  title: m.title?.[0]?.innerText ?? '',
-  metadata: (m.metadata ?? []).map((s) => s.innerText),
-  rating: m.rating?.[0]?.ratingLabel?.value ?? '',
-}));
-console.log(JSON.stringify(movies, null, 2));
+console.log(JSON.stringify(data.movies, null, 2));

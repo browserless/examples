@@ -6,7 +6,6 @@ curl -X POST \
   "https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE&proxy=residential&proxyCountry=us" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation ScrapeTicketmaster { goto(url: \"https://www.ticketmaster.com/search?q=concerts\", waitUntil: networkIdle) { status } waitForSelector(selector: \"[data-testid=search-event-card]\", timeout: 15000) { time } events: mapSelector(selector: \"[data-testid=search-event-card]\") { name: mapSelector(selector: \"[data-testid=event-name]\") { innerText } date: mapSelector(selector: \"[data-testid=event-date]\") { innerText } venue: mapSelector(selector: \"[data-testid=event-venue]\") { innerText } price: mapSelector(selector: \"[data-testid=event-price]\") { innerText } link: mapSelector(selector: \"a\") { href: attribute(name: \"href\") { value } } } }",
-    "variables": {},
-    "operationName": "ScrapeTicketmaster"
+    "query": "mutation ScrapeTicketmaster { goto(url: \"https://www.ticketmaster.com/search?q=concerts\", waitUntil: domContentLoaded) { status } waitForSelector(selector: \"[data-testid=eventList] > li\", timeout: 15000) { time } events: mapSelector(selector: \"[data-testid=eventList] > li\") { name: mapSelector(selector: \"button[aria-controls=eventOverflow] + span\") { innerText } date: mapSelector(selector: \"li > div > div > span:first-child\") { innerText } venue: mapSelector(selector: \"button[aria-controls=eventOverflow] + span + span span:last-child\") { innerText } link: mapSelector(selector: \"[data-testid=event-list-link]\") { href: attribute(name: \"href\") { value } } } }",
+    "variables": {}
   }'

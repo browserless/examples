@@ -13,7 +13,7 @@ mutation Scrape {
     innerText
   }
 
-  paragraphs: mapSelector(selector: "p") {
+  products: mapSelector(selector: ".product-title") {
     innerText
   }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scrapes YouTube search results using BQL with stealth mode.
+# Scrapes title, channel, views, likes, and upload date from a YouTube video page using BQL with stealth mode.
 # Run: bash scrape-youtube.sh
 
 curl -X POST \

@@ -1,16 +1,15 @@
 # Scrapes Booking.com hotel listings. Run against /stealth/bql with residential proxy.
+
 mutation ScrapeBooking {
   goto(
-    url: "https://www.booking.com/searchresults.html?ss=New+York&checkin=2025-09-01&checkout=2025-09-07&group_adults=2"
-    waitUntil: networkIdle
+    url: "https://www.booking.com/searchresults.html?ss=New+York&checkin=2027-06-01&checkout=2027-06-02&group_adults=2"
+    waitUntil: domContentLoaded
   ) {
     status
   }
-
-  waitForTimeout(time: 3000) {
+  waitForSelector(selector: "[data-testid='property-card']", timeout: 30000) {
     time
   }
-
   hotels: mapSelector(selector: "[data-testid='property-card']") {
     name: mapSelector(selector: "[data-testid='title']") {
       innerText
@@ -18,7 +17,10 @@ mutation ScrapeBooking {
     price: mapSelector(selector: "[data-testid='price-and-discounted-price']") {
       innerText
     }
-    rating: mapSelector(selector: "[data-testid='review-score']") {
+    rating: mapSelector(selector: "[data-testid='review-score'] [aria-hidden='true']") {
+      innerText
+    }
+    location: mapSelector(selector: "[data-testid='address-link']") {
       innerText
     }
   }

@@ -9,19 +9,26 @@ import puppeteer from 'puppeteer-core';
 const browser = await puppeteer.connect({
   browserWSEndpoint: 'wss://production-sfo.browserless.io?token=YOUR_API_TOKEN_HERE',
 });
+
 try {
   const page = await browser.newPage();
-  await page.goto('https://www.browserless.io/practice-form', {
-    waitUntil: 'networkidle2',
-  });
+  await page.goto('https://httpbin.org/forms/post', { waitUntil: 'domcontentloaded' });
 
-  await page.type('#Email', 'user@example.com');
-  await page.type('#Message', 'Hello from Browserless!');
-  await page.select('select#Subject', 'Support');
-  await page.click("button[type='submit']");
-  await page.waitForNavigation({ waitUntil: 'networkidle2' });
+  await page.type('input[name="custname"]', 'Jane Doe');
+  await page.type('input[name="custemail"]', 'jane@example.com');
+  await page.click('input[value="medium"]');
+  await page.click('input[value="cheese"]');
+  await page.type('textarea[name="comments"]', 'Hello from Browserless!');
 
-  console.log('Form submitted, current URL:', page.url());
+  // Register the navigation wait before clicking so the page load can't be missed.
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.click('form button'),
+  ]);
+
+  // httpbin echoes the submission as JSON; `form` holds the posted fields.
+  const body = await page.evaluate(() => document.body.innerText);
+  console.log(JSON.parse(body).form);
 } finally {
   // Always close to release the session even on error.
   await browser.close();

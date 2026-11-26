@@ -1,4 +1,4 @@
-// Scrapes LinkedIn job listings using BQL with stealth mode and residential proxy.
+// Scrapes LinkedIn job listings using Puppeteer with stealth mode and residential proxy.
 //
 // Install: npm install puppeteer-core
 // Run:     node scrape-linkedin-jobs.mjs
@@ -13,7 +13,7 @@ const browser = await puppeteer.connect({
 try {
   const page = await browser.newPage();
   await page.goto('https://www.linkedin.com/jobs/search/?keywords=software+engineer&location=United+States', {
-    waitUntil: 'networkidle2',
+    waitUntil: 'domcontentloaded',
   });
 
   await page.waitForSelector('.base-card');
@@ -24,6 +24,7 @@ try {
       company: card.querySelector('.base-search-card__subtitle a')?.innerText?.trim() ?? '',
       location: card.querySelector('.job-search-card__location')?.innerText?.trim() ?? '',
       posted: card.querySelector('time')?.innerText?.trim() ?? '',
+      link: card.querySelector('a.base-card__full-link')?.href ?? '',
     }))
   );
 

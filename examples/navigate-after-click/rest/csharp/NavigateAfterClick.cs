@@ -1,31 +1,31 @@
-// Clicks a link and waits for navigation to complete using BQL.
+// Clicks a link and waits for navigation to complete using the /function API.
 //
 // Run: dotnet run
 
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 
 string token = "YOUR_API_TOKEN_HERE";
-string endpoint = $"https://production-sfo.browserless.io/bql?token={token}";
+string endpoint = $"https://production-sfo.browserless.io/function?token={token}";
 
-var payload = new
-{
-    query = @"mutation NavigateAfterClick {
-      goto(url: ""https://scraping-sandbox.netlify.app/products"", waitUntil: networkIdle) { status }
-      click(selector: ""a"", waitForNavigation: true) { time }
-      title { title }
-      currentURL { url }
-    }",
-    variables = new { },
-    operationName = "NavigateAfterClick",
-};
+string code = @"export default async ({ page }) => {
+  await page.goto('https://scraping-sandbox.netlify.app/products');
+
+  // Register the navigation wait before clicking — if you click first,
+  // the page load can complete before waitForNavigation() starts listening.
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+    page.click('a[href=""/contact-us""]'),
+  ]);
+
+  const heading = await page.$eval('h1', el => el.textContent.trim());
+  return { url: page.url(), heading };
+};";
 
 using (HttpClient httpClient = new HttpClient())
 {
-    var content = new StringContent(
-        JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+    var content = new StringContent(code, Encoding.UTF8, "application/javascript");
     var response = await httpClient.PostAsync(endpoint, content);
-    string body = await response.Content.ReadAsStringAsync();
-    Console.WriteLine(body);
+    string result = await response.Content.ReadAsStringAsync();
+    Console.WriteLine(result);
 }

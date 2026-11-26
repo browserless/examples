@@ -4,21 +4,27 @@
 
 import com.microsoft.playwright.*;
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import java.util.*;
+import java.util.regex.Pattern;
 
-public class ExampleTest {
+class ExampleTest {
     static Playwright playwright;
     static Browser browser;
     BrowserContext context;
     Page page;
 
     @BeforeAll
-    static void launchBrowser() {
-        String token = "YOUR_API_TOKEN_HERE";
+    static void connect() {
         playwright = Playwright.create();
         browser = playwright.chromium().connect(
-            "wss://production-sfo.browserless.io/chromium/playwright?token=" + token
+            "wss://production-sfo.browserless.io/chromium/playwright?token=YOUR_API_TOKEN_HERE"
         );
+    }
+
+    @AfterAll
+    static void disconnect() {
+        playwright.close();
     }
 
     @BeforeEach
@@ -32,23 +38,35 @@ public class ExampleTest {
         context.close();
     }
 
-    @AfterAll
-    static void closeBrowser() {
-        browser.close();
-        playwright.close();
+    @Test
+    void pageHasCorrectTitle() {
+        page.navigate("https://scraping-sandbox.netlify.app/products");
+        assertThat(page).hasTitle(Pattern.compile("Product Catalog"));
     }
 
     @Test
-    void homepageLoads() {
-        page.navigate("https://automationexercise.com");
-        assertTrue(page.title().contains("Automation"), "Title should contain 'Automation'");
+    void headingIsVisible() {
+        page.navigate("https://scraping-sandbox.netlify.app/products");
+        Locator heading = page.locator("h1");
+        assertThat(heading).isVisible();
+        assertThat(heading).hasText("Product Catalog");
     }
 
     @Test
-    void productsPageShowsItems() {
-        page.navigate("https://automationexercise.com/products");
-        page.waitForSelector(".features_items");
-        int count = page.querySelectorAll(".product-image-wrapper").size();
-        assertTrue(count > 0, "Should find at least one product");
+    void pageHasLink() {
+        page.navigate("https://scraping-sandbox.netlify.app/products");
+        assertThat(page.locator("a[href]").first()).isVisible();
+    }
+
+    @Test
+    void pageLoadsWithoutAnalytics() {
+        List<String> blocked = new ArrayList<>();
+        page.route("**/analytics/**", route -> {
+            blocked.add(route.request().url());
+            route.abort();
+        });
+        page.navigate("https://scraping-sandbox.netlify.app/products");
+        assertThat(page).hasTitle(Pattern.compile("Product Catalog"));
+        System.out.println("Blocked " + blocked.size() + " analytics request(s)");
     }
 }

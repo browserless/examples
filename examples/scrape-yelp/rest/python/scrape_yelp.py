@@ -7,20 +7,20 @@ import requests
 
 query = """
 mutation ScrapeYelp {
-  goto(url: "https://www.yelp.com/search?find_desc=pizza&find_loc=New+York%2C+NY", waitUntil: networkIdle) {
+  goto(url: "https://www.yelp.com/search?find_desc=pizza&find_loc=New+York%2C+NY", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: "[data-testid=serp-ia-card]", timeout: 15000) {
     time
   }
   businesses: mapSelector(selector: "[data-testid=serp-ia-card]") {
-    name: mapSelector(selector: "a[class*=businessName] span") { innerText }
+    name: mapSelector(selector: "[class*=businessName] a") { innerText }
     rating: mapSelector(selector: "[aria-label*=star]") {
       ratingLabel: attribute(name: "aria-label") { value }
     }
-    reviewCount: mapSelector(selector: "span[class*=reviewCount]") { innerText }
-    categories: mapSelector(selector: "a[class*=categoryLink]") { innerText }
-    priceRange: mapSelector(selector: "span[class*=priceRange]") { innerText }
+    reviewCount: mapSelector(selector: "[data-traffic-crawl-id=SearchResultBizRating] span:last-child") { innerText }
+    categories: mapSelector(selector: "[data-testid=services-actions-component] a[href*=find_desc]") { innerText }
+    priceRange: mapSelector(selector: "[class*=icon--16-marker] + span + span:not([data-font-weight])") { innerText }
   }
 }
 """
@@ -32,12 +32,12 @@ response = requests.post(
         'proxy': 'residential',
         'proxyCountry': 'us',
     },
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeYelp'},
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
 for biz in data['businesses']:
-    name = biz['name'][0]['innerText'] if biz['name'] else ''
-    rating = biz['rating'][0]['ratingLabel']['value'] if biz['rating'] else ''
-    review_count = biz['reviewCount'][0]['innerText'] if biz['reviewCount'] else ''
-    print(f'{name} — {rating} — {review_count}')
+    name = biz['name'][0]['innerText']
+    rating = biz['rating'][0]['ratingLabel']['value']
+    reviews = biz['reviewCount'][0]['innerText']
+    print(f'{name} | {rating} | {reviews}')

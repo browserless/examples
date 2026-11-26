@@ -23,7 +23,7 @@ public class CloudflareUnblock {
         String token = "YOUR_API_TOKEN_HERE";
         HttpClient client = HttpClient.newHttpClient();
 
-        String body = "{\"url\":\"https://example-cloudflare-protected.com\","
+        String body = "{\"url\":\"https://www.scrapingcourse.com/cloudflare-challenge\","
             + "\"content\":true,\"cookies\":false,\"screenshot\":false,\"browserWSEndpoint\":false}";
 
         HttpRequest req = HttpRequest.newBuilder()

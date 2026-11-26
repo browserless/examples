@@ -1,4 +1,4 @@
-// Scrapes Zillow property listings using Puppeteer with stealth mode and residential proxy.
+// Scrapes real estate agent names and profile URLs from a Zillow agent directory using Puppeteer with stealth mode and residential proxy.
 //
 // Install: npm install puppeteer-core
 // Run:     node scrape-zillow.mjs
@@ -7,26 +7,27 @@ import puppeteer from 'puppeteer-core';
 
 const browser = await puppeteer.connect({
   browserWSEndpoint:
-    'wss://production-sfo.browserless.io/stealth?token=YOUR_API_TOKEN_HERE&proxy=residential&proxyCountry=us',
+    'wss://production-sfo.browserless.io/stealth?token=YOUR_API_TOKEN_HERE&proxy=residential&proxySticky=true&proxyCountry=us',
 });
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://www.zillow.com/new-york-ny/', {
-    waitUntil: 'networkidle2',
-  });
+  await page.goto(
+    'https://www.zillow.com/professionals/real-estate-agent-reviews/new-york-ny/',
+    { waitUntil: 'domcontentloaded' }
+  );
 
-  await new Promise((r) => setTimeout(r, 3000));
+  // The agent cards render client-side, so wait for the first one.
+  await page.waitForSelector('a[href*="/profile/"] h2');
 
-  const listings = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('[data-test="property-card"]')).map((card) => ({
-      address: card.querySelector('[data-test="property-card-addr"]')?.innerText?.trim() ?? '',
-      price: card.querySelector('[data-test="property-card-price"]')?.innerText?.trim() ?? '',
-      details: card.querySelector('.StyledPropertyCardHomeDetails')?.innerText?.trim() ?? '',
+  const agents = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('a[href*="/profile/"]')).map((link) => ({
+      name: link.querySelector('h2')?.innerText?.trim() ?? '',
+      profileUrl: link.href,
     }))
   );
 
-  console.log(JSON.stringify(listings, null, 2));
+  console.log(JSON.stringify(agents, null, 2));
 } finally {
   await browser.close();
 }

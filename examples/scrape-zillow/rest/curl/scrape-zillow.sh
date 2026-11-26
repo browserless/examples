@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scrapes Zillow property listings using BQL with stealth mode and residential proxy.
+# Scrapes real estate agent names and profile URLs from a Zillow agent directory using BQL with stealth mode and residential proxy.
 # Run: bash scrape-zillow.sh
 
 curl -X POST \

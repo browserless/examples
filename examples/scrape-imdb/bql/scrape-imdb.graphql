@@ -3,7 +3,7 @@
 # BQL IDE:  https://account.browserless.io/bql
 
 mutation ScrapeIMDb {
-  goto(url: "https://www.imdb.com/chart/top/", waitUntil: networkIdle) {
+  goto(url: "https://www.imdb.com/chart/top/", waitUntil: domContentLoaded) {
     status
   }
   waitForSelector(selector: ".ipc-metadata-list-summary-item", timeout: 15000) {
@@ -11,7 +11,7 @@ mutation ScrapeIMDb {
   }
   movies: mapSelector(selector: ".ipc-metadata-list-summary-item") {
     title: mapSelector(selector: ".ipc-title__text") { innerText }
-    metadata: mapSelector(selector: ".cli-title-metadata span") { innerText }
+    metadata: mapSelector(selector: ".cli-title-metadata li") { innerText }
     rating: mapSelector(selector: ".ipc-rating-star--imdb") {
       ratingLabel: attribute(name: "aria-label") { value }
     }

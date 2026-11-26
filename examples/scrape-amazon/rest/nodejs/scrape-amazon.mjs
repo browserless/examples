@@ -3,19 +3,19 @@
 // Run: node scrape-amazon.mjs
 
 const query = `mutation ScrapeAmazon {
-  goto(url: "https://www.amazon.com/s?k=wireless+headphones", waitUntil: networkIdle) {
+  goto(url: "https://www.amazon.com/s?k=wireless+headphones", waitUntil: domContentLoaded) {
     status
   }
-  waitForSelector(selector: "div.s-result-item[data-asin]", timeout: 15000) {
+  waitForSelector(selector: "[data-component-type=s-search-result]", timeout: 15000) {
     time
   }
-  products: mapSelector(selector: "div.s-result-item[data-asin]") {
+  products: mapSelector(selector: "[data-component-type=s-search-result]") {
     asin: attribute(name: "data-asin") { value }
     title: mapSelector(selector: "h2 span") { innerText }
     price: mapSelector(selector: ".a-price .a-offscreen") { innerText }
     rating: mapSelector(selector: ".a-icon-alt") { innerText }
-    reviewCount: mapSelector(selector: ".a-size-base.s-underline-text") { innerText }
-    link: mapSelector(selector: "h2 a") {
+    reviewCount: mapSelector(selector: "[aria-label*=ratings]") { innerText }
+    link: mapSelector(selector: "a:has(h2)") {
       href: attribute(name: "href") { value }
     }
   }
@@ -26,15 +26,9 @@ const response = await fetch(
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: {}, operationName: 'ScrapeAmazon' }),
+    body: JSON.stringify({ query, variables: {} }),
   }
 );
 
 const { data } = await response.json();
-const products = data.products.map((p) => ({
-  asin: p.asin?.value ?? '',
-  title: p.title?.[0]?.innerText ?? '',
-  price: p.price?.[0]?.innerText ?? '',
-  rating: p.rating?.[0]?.innerText ?? '',
-}));
-console.log(JSON.stringify(products, null, 2));
+console.log(JSON.stringify(data.products, null, 2));

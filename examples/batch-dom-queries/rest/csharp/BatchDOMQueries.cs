@@ -1,35 +1,33 @@
-// Runs multiple DOM queries in a single BQL request.
+// Runs multiple DOM queries in a single /function request.
 //
 // Run: dotnet run
 
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 
 string token = "YOUR_API_TOKEN_HERE";
-string endpoint = $"https://production-sfo.browserless.io/bql?token={token}";
+string endpoint = $"https://production-sfo.browserless.io/function?token={token}";
 
-var payload = new
-{
-    query = @"mutation BatchDOMQueries {
-      goto(url: ""https://scraping-sandbox.netlify.app/products"", waitUntil: networkIdle) { status }
-      title { title }
-      heading: text(selector: ""h1"") { text }
-      description: attribute(selector: ""meta[name='description']"", name: ""content"") { value }
-      links: mapSelector(selector: ""a"") {
-        text: innerText
-        href: attribute(name: ""href"") { value }
-      }
-    }",
-    variables = new { },
-    operationName = "BatchDOMQueries",
-};
+string code = @"export default async ({ page }) => {
+  await page.goto('https://scraping-sandbox.netlify.app/products');
+
+  const data = await page.evaluate(() => ({
+    title: document.title,
+    heading: document.querySelector('h1')?.textContent?.trim() ?? null,
+    links: Array.from(document.querySelectorAll('a[href]')).map(a => ({
+      text: a.textContent.trim(),
+      href: a.href,
+    })),
+    productCount: document.querySelectorAll('.product-title').length,
+  }));
+
+  return data;
+};";
 
 using (HttpClient httpClient = new HttpClient())
 {
-    var content = new StringContent(
-        JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+    var content = new StringContent(code, Encoding.UTF8, "application/javascript");
     var response = await httpClient.PostAsync(endpoint, content);
-    string body = await response.Content.ReadAsStringAsync();
-    Console.WriteLine(body);
+    string result = await response.Content.ReadAsStringAsync();
+    Console.WriteLine(result);
 }

@@ -6,36 +6,36 @@
 import requests
 
 query = """
-mutation ScrapeReddit {
-  goto(url: "https://www.reddit.com/r/programming/", waitUntil: networkIdle) {
+mutation ScrapeRedditPosts {
+  goto(url: "https://www.reddit.com/r/programming/", waitUntil: domContentLoaded) {
     status
   }
-  waitForTimeout(time: 2000) {
+  waitForSelector(selector: "shreddit-post", timeout: 15000) {
     time
   }
-  posts: mapSelector(selector: "article") {
-    title: mapSelector(selector: "[id*='post-title']") {
-      innerText
-    }
-    score: mapSelector(selector: "[id*='vote-arrows']") {
-      innerText
-    }
-    comments: mapSelector(selector: "a[data-click-id='comments']") {
-      innerText
-    }
+  posts: mapSelector(selector: "shreddit-post") {
+    title: attribute(name: "post-title") { value }
+    score: attribute(name: "score") { value }
+    commentCount: attribute(name: "comment-count") { value }
+    permalink: attribute(name: "permalink") { value }
   }
 }
 """
 
 response = requests.post(
     'https://production-sfo.browserless.io/stealth/bql',
-    params={'token': 'YOUR_API_TOKEN_HERE'},
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeReddit'},
+    params={
+        'token': 'YOUR_API_TOKEN_HERE',
+        'proxy': 'residential',
+        'proxyCountry': 'us',
+    },
+    json={'query': query, 'variables': {}},
 )
 
 data = response.json()['data']
 for post in data['posts']:
-    title = post['title'][0]['innerText'] if post['title'] else ''
-    score = post['score'][0]['innerText'] if post['score'] else ''
-    comments = post['comments'][0]['innerText'] if post['comments'] else ''
-    print(f'{title}\n  Score: {score} | {comments}\n')
+    title = post['title']['value']
+    score = post['score']['value']
+    comments = post['commentCount']['value']
+    permalink = post['permalink']['value']
+    print(f'{title} | {score} pts | {comments} comments | reddit.com{permalink}')

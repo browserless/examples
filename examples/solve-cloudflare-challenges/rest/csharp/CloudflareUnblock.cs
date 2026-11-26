@@ -19,7 +19,7 @@ class CloudflareUnblock
         using var client = new HttpClient();
 
         var body = new StringContent(
-            "{\"url\":\"https://example-cloudflare-protected.com\","
+            "{\"url\":\"https://www.scrapingcourse.com/cloudflare-challenge\","
             + "\"content\":true,\"cookies\":false,\"screenshot\":false,\"browserWSEndpoint\":false}",
             Encoding.UTF8, "application/json");
 

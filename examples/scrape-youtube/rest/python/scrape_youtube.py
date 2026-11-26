@@ -6,36 +6,29 @@
 import requests
 
 query = """
-mutation ScrapeYouTube {
-  goto(url: "https://www.youtube.com/results?search_query=javascript+tutorial", waitUntil: networkIdle) {
+mutation ScrapeYouTubeVideo {
+  goto(url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", waitUntil: domContentLoaded) {
     status
   }
-  waitForTimeout(time: 2000) {
+  waitForSelector(selector: "#view-count[aria-label]", timeout: 20000) {
     time
   }
-  videos: mapSelector(selector: "ytd-video-renderer") {
-    title: mapSelector(selector: "#video-title") {
-      innerText
-    }
-    channel: mapSelector(selector: "[id='channel-name']") {
-      innerText
-    }
-    views: mapSelector(selector: "span.inline-metadata-item") {
-      innerText
-    }
+  title: text(selector: "h1.ytd-watch-metadata yt-formatted-string") { text }
+  channel: text(selector: "ytd-channel-name yt-formatted-string a") { text }
+  views: mapSelector(selector: "#view-count") {
+    label: attribute(name: "aria-label") { value }
   }
+  likes: mapSelector(selector: "#top-level-buttons-computed like-button-view-model button") {
+    label: attribute(name: "aria-label") { value }
+  }
+  uploadDate: text(selector: "#info-strings yt-formatted-string") { text }
 }
 """
 
 response = requests.post(
     'https://production-sfo.browserless.io/stealth/bql',
     params={'token': 'YOUR_API_TOKEN_HERE'},
-    json={'query': query, 'variables': {}, 'operationName': 'ScrapeYouTube'},
+    json={'query': query, 'variables': {}},
 )
 
-data = response.json()['data']
-for video in data['videos']:
-    title = video['title'][0]['innerText'] if video['title'] else ''
-    channel = video['channel'][0]['innerText'] if video['channel'] else ''
-    views = video['views'][0]['innerText'] if video['views'] else ''
-    print(f'{title}\n  {channel} — {views}\n')
+print(response.json())

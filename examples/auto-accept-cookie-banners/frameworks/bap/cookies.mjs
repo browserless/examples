@@ -14,13 +14,15 @@ const browser = Browserless.connect({
 
 try {
   const page = await browser.newPage();
-  await page.goto('https://scraping-sandbox.netlify.app/clarity-health', { waitUntil: 'networkIdle' });
+  await page.goto('https://www.onetrust.com/', { waitUntil: 'networkIdle' });
 
   const selector = '[id*=accept], [class*=accept], button[id*=cookie]';
 
-  // BAP has no `if` mutation, so branch in JavaScript instead.
+  // BAP has no `if` mutation, so branch in TypeScript instead.
   if (await page.$(selector)) {
     await page.click(selector);
+    // Give the banner a moment to animate out before the screenshot.
+    await page.waitForTimeout(1000);
   }
 
   await page.screenshot({ path: 'screenshot.png' });

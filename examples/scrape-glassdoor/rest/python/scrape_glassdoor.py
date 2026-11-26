@@ -17,7 +17,7 @@ mutation ScrapeGlassdoor {
     title: mapSelector(selector: "a[data-test='job-title']") {
       innerText
     }
-    company: mapSelector(selector: "[data-test='employer-name']") {
+    company: mapSelector(selector: "[id^='job-employer-'] span[class*='EmployerName']") {
       innerText
     }
     location: mapSelector(selector: "[data-test='emp-location']") {

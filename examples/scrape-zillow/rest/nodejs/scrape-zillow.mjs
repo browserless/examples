@@ -3,27 +3,27 @@
 // Run: node scrape-zillow.mjs
 
 const query = `mutation ScrapeZillow {
-  goto(url: "https://www.zillow.com/new-york-ny/", waitUntil: networkIdle) {
+  goto(
+    url: "https://www.zillow.com/professionals/real-estate-agent-reviews/new-york-ny/"
+    waitUntil: networkIdle
+  ) {
     status
   }
   waitForTimeout(time: 3000) {
     time
   }
-  listings: mapSelector(selector: "[data-test='property-card']") {
-    address: mapSelector(selector: "[data-test='property-card-addr']") {
+  agents: mapSelector(selector: "a[href*='/profile/']") {
+    name: mapSelector(selector: "h2") {
       innerText
     }
-    price: mapSelector(selector: "[data-test='property-card-price']") {
-      innerText
-    }
-    details: mapSelector(selector: ".StyledPropertyCardHomeDetails") {
-      innerText
+    profileUrl: attribute(name: "href") {
+      value
     }
   }
 }`;
 
 const response = await fetch(
-  'https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE&proxy=residential&proxyCountry=us',
+  'https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE&proxy=residential&proxySticky=true&proxyCountry=us&humanlike=true&blockAds=true',
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -32,9 +32,8 @@ const response = await fetch(
 );
 
 const { data } = await response.json();
-const listings = data.listings.map((l) => ({
-  address: l.address?.[0]?.innerText ?? '',
-  price: l.price?.[0]?.innerText ?? '',
-  details: l.details?.[0]?.innerText ?? '',
+const agents = data.agents.map((a) => ({
+  name: a.name?.[0]?.innerText ?? '',
+  profileUrl: a.profileUrl?.value ?? '',
 }));
-console.log(JSON.stringify(listings, null, 2));
+console.log(JSON.stringify(agents, null, 2));

@@ -6,7 +6,6 @@ curl -X POST \
   "https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation ScrapeYouTube { goto(url: \"https://www.youtube.com/results?search_query=javascript+tutorial\", waitUntil: networkIdle) { status } waitForTimeout(time: 2000) { time } videos: mapSelector(selector: \"ytd-video-renderer\") { title: mapSelector(selector: \"#video-title\") { innerText } channel: mapSelector(selector: \"[id='\''channel-name'\'']\") { innerText } views: mapSelector(selector: \"span.inline-metadata-item\") { innerText } } }",
-    "variables": {},
-    "operationName": "ScrapeYouTube"
+    "query": "mutation ScrapeYouTubeVideo { goto(url: \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\", waitUntil: domContentLoaded) { status } waitForSelector(selector: \"#view-count[aria-label]\", timeout: 20000) { time } title: text(selector: \"h1.ytd-watch-metadata yt-formatted-string\") { text } channel: text(selector: \"ytd-channel-name yt-formatted-string a\") { text } views: mapSelector(selector: \"#view-count\") { label: attribute(name: \"aria-label\") { value } } likes: mapSelector(selector: \"#top-level-buttons-computed like-button-view-model button\") { label: attribute(name: \"aria-label\") { value } } uploadDate: text(selector: \"#info-strings yt-formatted-string\") { text } }",
+    "variables": {}
   }'

@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
-# Searches Google and extracts result headings using the Browserless /scrape endpoint.
-# Note: Google may block or CAPTCHA this request — use BQL for more reliable results.
+# Searches Google and extracts result headings with a BQL mutation on the /stealth/bql endpoint.
+# Stealth mode helps, but Google can still answer with a block or CAPTCHA page.
 #
 # Run: bash search.sh
 
 curl -X POST \
-  "https://production-sfo.browserless.io/scrape?token=YOUR_API_TOKEN_HERE" \
+  "https://production-sfo.browserless.io/stealth/bql?token=YOUR_API_TOKEN_HERE" \
   -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://www.google.com/search?q=Browserless+headless+browser",
-    "elements": [{ "selector": "h3" }]
-  }'
+  -d "{\"query\": \"mutation GoogleSearch { goto(url: \\\"https://www.google.com/search?q=Browserless+headless+browser\\\") { status } results: mapSelector(selector: \\\"h3\\\", wait: true) { innerText } }\", \"variables\": {}}"

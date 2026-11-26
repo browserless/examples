@@ -43,8 +43,9 @@ public class ExampleTests
     [OneTimeTearDown]
     public async Task OneTimeTearDown()
     {
-        await _browser.CloseAsync();
-        _playwright.Dispose();
+        // One-time teardown also runs when setup failed, so either field may be null.
+        if (_browser is not null) await _browser.CloseAsync();
+        _playwright?.Dispose();
     }
 
     [Test]
